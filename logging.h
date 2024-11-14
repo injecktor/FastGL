@@ -4,7 +4,7 @@
 #include "cassert"
 #include "iostream"
 
-#define ASSERT(_condition_, _msg_) if (!_condition_) { \
+#define ASSERT(_condition_, _msg_) if (!(_condition_)) { \
     printf("%s", _msg_); \
     exit(0); }
 
