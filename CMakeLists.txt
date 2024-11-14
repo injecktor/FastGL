@@ -3,4 +3,7 @@ project(image_processing)
 
 set(CMAKE_CXX_STANDARD 20)
 
-add_executable(image_processing main.cpp)
+add_executable(image_processing main.cpp
+        logging.h
+        png_init.cpp
+        png_init.h)
