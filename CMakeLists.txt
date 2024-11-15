@@ -5,5 +5,8 @@ set(CMAKE_CXX_STANDARD 20)
 
 add_executable(image_processing main.cpp
         logging.h
-        png_init.cpp
-        png_init.h)
+        png.cpp
+        png.h
+        ppm.cpp
+        ppm.h
+        color.h)
