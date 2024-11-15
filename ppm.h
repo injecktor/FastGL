@@ -11,9 +11,11 @@ using namespace std;
 class ppm_t {
 public:
     explicit ppm_t(ofstream* file, unsigned width, unsigned height);
-    void line();
+    void set_pixel(color_t color, uint32_t x, uint32_t y);
+    void set_background(color_t color);
+    void line(color_t color, uint32_t x1, uint32_t y1, uint32_t x2, uint32_t y2);
     void set_border(color_t color, line_t line_type);
-    void show();
+    void show() const;
 
 private:
     ofstream* m_file;
@@ -21,7 +23,10 @@ private:
     string m_ppm_init = "P3";
     unsigned m_width;
     unsigned m_height;
-    vector<array<uint8_t, 3>> m_image_buffer;
+    unsigned m_resolution;
+    // if 1 it's background otherwise it's not
+    vector<color_t> m_image_buffer;
+    vector<uint8_t> m_background_bit_mask;
 };
 
 #endif //PPM_H

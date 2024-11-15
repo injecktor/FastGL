@@ -10,7 +10,9 @@ using namespace std;
 
 class color_t {
 public:
-    enum class colors {
+    enum colors : uint8_t {
+        black,
+        white,
         red,
         green,
         blue
@@ -18,13 +20,19 @@ public:
 
     explicit color_t(const colors color) {
         switch (color) {
-            case colors::red: {
+            case black: {
+                init(0x000000);
+            } break;
+            case white: {
+                init(0xFFFFFF);
+            } break;
+            case red: {
                 init(0xFF0000);
             } break;
-            case colors::green: {
+            case green: {
                 init(0x00FF00);
             } break;
-            case colors::blue: {
+            case blue: {
                 init(0x0000FF);
             } break;
         }

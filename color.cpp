@@ -15,7 +15,7 @@ line_t::line_t(color_t color, line_type_t line_type, uint32_t line_width) : m_co
         case line_type_t::dotdash: {
             m_bit_mask = 0b11110000'01100000;
         } break;
-        case default: {
+        default: {
             ASSERT(false, "Unknown line type");
         } break;
     }
