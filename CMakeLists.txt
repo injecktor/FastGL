@@ -9,4 +9,5 @@ add_executable(image_processing main.cpp
         png.h
         ppm.cpp
         ppm.h
-        color.h)
+        color.h
+        color.cpp)

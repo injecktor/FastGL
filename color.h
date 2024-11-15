@@ -24,4 +24,18 @@ private:
     uint8_t r, g, b;
 };
 
+class line_t {
+    enum class line_type_t {
+        solid,
+        dotted,
+        dashed,
+        dotdash
+    };
+    color_t m_color;
+    line_type_t m_line_type;
+    uint32_t m_line_width;
+public:
+    line_t(color_t color, line_type_t line_type, uint32_t line_width);
+};
+
 #endif //COLOR_H
