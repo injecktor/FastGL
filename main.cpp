@@ -3,7 +3,7 @@
 #include <cstdint>
 
 #include "logging.h"
-#include "ppm.h"
+#include "image_process.h"
 
 using namespace std;
 

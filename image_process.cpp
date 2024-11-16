@@ -4,15 +4,16 @@ image_process_t::image_process_t(const unsigned width, const unsigned height) : 
     m_height(height),
     m_resolution(width * height) {
     m_image_buffer.reserve(m_resolution);
-    m_background_bit_mask.reserve(m_resolution);
+    m_background_bit_mask.reserve((m_resolution - 1) / 8 + 1);
     for (unsigned i = 0; i < m_resolution; ++i) {
-        m_background_bit_mask.emplace_back(1);
+        m_background_bit_mask.emplace_back(0xFF);
         m_image_buffer.emplace_back(color_t::black);
     }
 }
 
 void image_process_t::set_pixel(const color_t color, const unsigned x, const unsigned y) {
     m_image_buffer[y * m_width + x] = color;
+    m_background_bit_mask[(y * m_width + x) / 8] &= ~(1 << ((y * m_width + x) % 8));
 }
 
 
@@ -46,4 +47,8 @@ void image_process_t::line(const color_t color, const unsigned width, const unsi
             y += 1;
         }
     }
+}
+
+void image_process_t::generate_image(image_type image_type) {
+
 }
