@@ -1,6 +1,6 @@
 #include "color.h"
 
-line_t::line_t(color_t color, line_type_t line_type, uint32_t line_width) : m_color(color),
+line_t::line_t(color_t color, line_type_t line_type, unsigned line_width) : m_color(color),
                                                                             m_line_width(line_width) {
     switch (line_type) {
         case line_type_t::solid: {

@@ -38,7 +38,7 @@ public:
         }
     }
 
-    explicit color_t(const uint32_t hex) {
+    explicit color_t(const unsigned hex) {
         init(hex);
     }
 
@@ -58,7 +58,7 @@ public:
 private:
     uint8_t r = 0, g = 0, b = 0;
 
-    void init(const uint32_t hex) {
+    void init(const unsigned hex) {
         r = (hex >> 16) & 255;
         g = (hex >> 8) & 255;
         b = hex & 255;
@@ -74,12 +74,12 @@ class line_t {
     };
 
     color_t m_color;
-    uint32_t m_line_width;
+    unsigned m_line_width;
     uint16_t m_bit_mask;
     uint8_t m_bit_offset = 0;
 
 public:
-    line_t(color_t color, line_type_t line_type, uint32_t line_width);
+    line_t(color_t color, line_type_t line_type, unsigned line_width);
 
     [[nodiscard]] uint8_t get_next_mask_bit();
 

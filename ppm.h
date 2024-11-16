@@ -11,9 +11,9 @@ using namespace std;
 class ppm_t {
 public:
     explicit ppm_t(ofstream* file, unsigned width, unsigned height);
-    void set_pixel(color_t color, uint32_t x, uint32_t y);
+    void set_pixel(color_t color, unsigned x, unsigned y);
     void set_background(color_t color);
-    void line(color_t color, uint32_t width, uint32_t x1, uint32_t y1, uint32_t x2, uint32_t y2);
+    void line(color_t color, unsigned width, unsigned x1, unsigned y1, unsigned x2, unsigned y2);
     void set_border(color_t color, line_t line_type);
     void show() const;
 

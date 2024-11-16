@@ -14,7 +14,7 @@ int main() {
 
     ppm_t ppm(&fout, 250, 250);
 
-    ppm.line(color_t(color_t::red), 10, 127, 50, 240, 150);
+    ppm.line(color_t(color_t::red), 1, 127, 50, 240, 150);
 
     ppm.show();
 
