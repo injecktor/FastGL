@@ -19,7 +19,7 @@ void image_process_t::set_pixel(const color_t color, const unsigned x, const uns
 
 void image_process_t::set_background(const color_t color) {
     for (unsigned i = 0; i < m_resolution; ++i) {
-        if (m_background_bit_mask[i]) {
+        if (m_background_bit_mask[i / 8] & (1 << (i % 8))) {
             m_image_buffer[i] = color;
         }
     }
