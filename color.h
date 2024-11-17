@@ -22,19 +22,24 @@ public:
         switch (color) {
             case black: {
                 init(0x000000);
-            } break;
+            }
+            break;
             case white: {
                 init(0xFFFFFF);
-            } break;
+            }
+            break;
             case red: {
                 init(0xFF0000);
-            } break;
+            }
+            break;
             case green: {
                 init(0x00FF00);
-            } break;
+            }
+            break;
             case blue: {
                 init(0x0000FF);
-            } break;
+            }
+            break;
         }
     }
 
@@ -53,7 +58,6 @@ public:
     [[nodiscard]] uint8_t getB() const {
         return b;
     }
-
 
 private:
     uint8_t r = 0, g = 0, b = 0;

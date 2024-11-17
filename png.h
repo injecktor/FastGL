@@ -11,10 +11,10 @@ using namespace std;
 
 class png_t {
 public:
-    void init(ofstream* file, unsigned int width, unsigned int height);
+    void init(ofstream *file, unsigned int width, unsigned int height);
 
 private:
-    ofstream* m_file = nullptr;
+    ofstream *m_file = nullptr;
 
     // const uint8_t m_png_structure_bytes[] = {
     //     0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A
@@ -34,9 +34,9 @@ private:
     // };
 
     void add_png_structure() const;
+
     void add_ihdr_chunk() const;
 };
-
 
 
 #endif //PNG_INIT_H
