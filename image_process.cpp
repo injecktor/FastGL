@@ -57,19 +57,30 @@ void image_process_t::square(const color_t color, const unsigned width, const un
     line(color, width, x1, y1 + length, x1 + length, y1 + length);
 }
 
-void image_process_t::generate_image(const string& file_name, const image_type image_type) const {
-    image_generator_t* i_g;
+void image_process_t::rectangle(const color_t color, const unsigned width, const unsigned x1, const unsigned y1,
+                               const unsigned x2, const unsigned y2) {
+    line(color, width, x1, y1, x2, y1);
+    line(color, width, x1, y1, x1, y2);
+    line(color, width, x2, y1, x2, y2);
+    line(color, width, x1, y2, x2, y2);
+}
+
+void image_process_t::generate_image(const string &file_name, const image_type image_type) const {
+    image_generator_t *i_g;
     ofstream file;
     switch (image_type) {
         case ppm: {
             i_g = new ppm_t(&file, m_width, m_height);
-        } break;
+        }
+        break;
         case png: {
             ASSERT(false, "Not implemented");
-        } break;
+        }
+        break;
         default: {
             ASSERT(false, "Unknown image format");
-        } break;
+        }
+        break;
     }
     file.open("../" + file_name + '.' + i_g->get_format_extension(), ofstream::out | ofstream::binary);
     ASSERT(file.is_open(), "Could not open file");

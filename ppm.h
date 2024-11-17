@@ -13,7 +13,7 @@ class ppm_t final : public image_generator_t {
 public:
     explicit ppm_t(ofstream *file, unsigned width, unsigned height);
 
-    void init();
+    void init() override;
 
     unsigned generate(const vector<color_t> &image_buffer) override;
 
