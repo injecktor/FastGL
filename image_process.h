@@ -27,6 +27,9 @@ public:
 
     void rectangle(color_t color, unsigned width, unsigned x1, unsigned y1, unsigned x2, unsigned y2);
 
+    void triangle(color_t color, unsigned width, unsigned x1, unsigned y1, unsigned x2, unsigned y2, unsigned x3,
+                  unsigned y3);
+
     //file_name without extension
     void generate_image(const string &file_name, image_type image_type) const;
 

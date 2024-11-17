@@ -28,8 +28,8 @@ void image_process_t::set_background(const color_t color) {
 void image_process_t::line(const color_t color, const unsigned width, const unsigned x1, const unsigned y1,
                            const unsigned x2, const unsigned y2) {
     double x = x1, y = y1;
-    const double dx = x2 - x1;
-    const double dy = y2 - y1;
+    const double dx = static_cast<signed>(x2 - x1);
+    const double dy = static_cast<signed>(y2 - y1);
     if (abs(dx) > abs(dy)) {
         while (static_cast<unsigned>(x) != x2) {
             for (unsigned i = 0; i < width; ++i) {
@@ -58,11 +58,19 @@ void image_process_t::square(const color_t color, const unsigned width, const un
 }
 
 void image_process_t::rectangle(const color_t color, const unsigned width, const unsigned x1, const unsigned y1,
-                               const unsigned x2, const unsigned y2) {
+                                const unsigned x2, const unsigned y2) {
     line(color, width, x1, y1, x2, y1);
     line(color, width, x1, y1, x1, y2);
     line(color, width, x2, y1, x2, y2);
     line(color, width, x1, y2, x2, y2);
+}
+
+void image_process_t::triangle(const color_t color, const unsigned width, const unsigned x1, const unsigned y1,
+                               const unsigned x2, const unsigned y2, const unsigned x3,
+                               const unsigned y3) {
+    line(color, width, x1, y1, x2, y2);
+    line(color, width, x3, y3, x2, y2);
+    line(color, width, x1, y1, x3, y3);
 }
 
 void image_process_t::generate_image(const string &file_name, const image_type image_type) const {
