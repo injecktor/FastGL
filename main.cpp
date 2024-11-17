@@ -8,17 +8,11 @@
 using namespace std;
 
 int main() {
-    ofstream fout("../image.ppm", ios::out | ios::binary);
+    image_process_t ip(250, 250);
 
-    ASSERT(fout.is_open(), "Error opening file");
+    ip.line(color_t(color_t::red), 1, 127, 50, 240, 150);
 
-    ppm_t ppm(&fout, 250, 250);
-
-    ppm.line(color_t(color_t::red), 1, 127, 50, 240, 150);
-
-    ppm.show();
-
-    fout.close();
+    ip.generate_image("image", image_process_t::ppm);
 
     return 0;
 }

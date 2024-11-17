@@ -17,7 +17,9 @@ public:
     void set_background(color_t color);
     void line(color_t color, unsigned width, unsigned x1, unsigned y1, unsigned x2, unsigned y2);
     void set_border(color_t color, line_t line_type);
-    void generate_image(image_type image_type);
+    void square(color_t color, unsigned width, unsigned x1, unsigned y1, unsigned length);
+    //file_name without extension
+    void generate_image(const string& file_name, image_type image_type) const;
 
 private:
     unsigned m_width;

@@ -49,6 +49,32 @@ void image_process_t::line(const color_t color, const unsigned width, const unsi
     }
 }
 
-void image_process_t::generate_image(image_type image_type) {
+void image_process_t::square(const color_t color, const unsigned width, const unsigned x1, const unsigned y1,
+                             const unsigned length) {
+    line(color, width, x1, y1, x1 + length, y1);
+    line(color, width, x1, y1, x1, y1 + length);
+    line(color, width, x1 + length, y1, x1 + length, y1 + length);
+    line(color, width, x1, y1 + length, x1 + length, y1 + length);
+}
 
+void image_process_t::generate_image(const string& file_name, const image_type image_type) const {
+    image_generator_t* i_g;
+    ofstream file;
+    switch (image_type) {
+        case ppm: {
+            i_g = new ppm_t(&file, m_width, m_height);
+        } break;
+        case png: {
+            ASSERT(false, "Not implemented");
+        } break;
+        default: {
+            ASSERT(false, "Unknown image format");
+        } break;
+    }
+    file.open("../" + file_name + '.' + i_g->get_format_extension(), ofstream::out | ofstream::binary);
+    ASSERT(file.is_open(), "Could not open file");
+    i_g->init();
+    i_g->generate(m_image_buffer);
+    file.close();
+    delete i_g;
 }
