@@ -26,7 +26,8 @@ void image_process_t::set_background(const color_t color) {
     }
 }
 
-void image_process_t::circle(const color_t color, const unsigned x, const unsigned y, const unsigned radius, bool fill) {
+void image_process_t::circle(const color_t color, const unsigned x, const unsigned y, const unsigned radius,
+                             bool fill) {
     const auto s_radius = static_cast<signed>(radius);
     ASSERT(radius != 0, "Can't draw circle with zero radius");
     for (signed i = -s_radius + 1; i <= s_radius - 1; ++i) {
@@ -45,17 +46,13 @@ void image_process_t::line(const color_t color, const unsigned width, const unsi
     const double dy = static_cast<signed>(y2 - y1);
     if (abs(dx) > abs(dy)) {
         while (static_cast<unsigned>(x) != x2) {
-            for (unsigned i = 0; i < width; ++i) {
-                set_pixel(color, static_cast<unsigned>(x), static_cast<unsigned>(round(y - (width - 1) / 2. + i)));
-            }
+            circle(color, static_cast<unsigned>(x), static_cast<unsigned>(round(y)), width);
             y = y + dy / dx;
             x += 1;
         }
     } else {
         while (static_cast<unsigned>(y) != y2) {
-            for (unsigned i = 0; i < width; ++i) {
-                set_pixel(color, static_cast<unsigned>(round(x - (width - 1) / 2. + i)), static_cast<unsigned>(y));
-            }
+            circle(color, static_cast<unsigned>(round(x)), static_cast<unsigned>(y), width);
             x = x + dx / dy;
             y += 1;
         }
