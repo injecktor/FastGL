@@ -12,6 +12,7 @@ image_process_t::image_process_t(const unsigned width, const unsigned height) : 
 }
 
 void image_process_t::set_pixel(const color_t color, const unsigned x, const unsigned y) {
+    if (x >= m_width || y >= m_height) return;
     m_image_buffer[y * m_width + x] = color;
     m_background_bit_mask[(y * m_width + x) / 8] &= ~(1 << ((y * m_width + x) % 8));
 }
@@ -21,6 +22,18 @@ void image_process_t::set_background(const color_t color) {
     for (unsigned i = 0; i < m_resolution; ++i) {
         if (m_background_bit_mask[i / 8] & (1 << (i % 8))) {
             m_image_buffer[i] = color;
+        }
+    }
+}
+
+void image_process_t::circle(const color_t color, const unsigned x, const unsigned y, const unsigned radius, bool fill) {
+    const auto s_radius = static_cast<signed>(radius);
+    ASSERT(radius != 0, "Can't draw circle with zero radius");
+    for (signed i = -s_radius + 1; i <= s_radius - 1; ++i) {
+        for (signed j = -s_radius + abs(i) + 1; j <= s_radius - abs(i) - 1; ++j) {
+            if (fill || j == -s_radius + abs(i) + 1 || j == s_radius - abs(i) - 1) {
+                set_pixel(color, x + i, y + j);
+            }
         }
     }
 }

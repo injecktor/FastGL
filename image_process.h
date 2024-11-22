@@ -19,9 +19,11 @@ public:
 
     void set_background(color_t color);
 
+    void circle(color_t color, unsigned x, unsigned y, unsigned radius, bool fill = true);
+
     void line(color_t color, unsigned width, unsigned x1, unsigned y1, unsigned x2, unsigned y2);
 
-    void set_border(color_t color, line_t line_type);
+    void border(color_t color, line_t line_type);
 
     void square(color_t color, unsigned width, unsigned x1, unsigned y1, unsigned length);
 
@@ -30,7 +32,7 @@ public:
     void triangle(color_t color, unsigned width, unsigned x1, unsigned y1, unsigned x2, unsigned y2, unsigned x3,
                   unsigned y3);
 
-    //file_name without extension
+    /// \param file_name without extension
     void generate_image(const string &file_name, image_type image_type) const;
 
 private:
