@@ -28,11 +28,11 @@ void image_process_t::set_background(const color_t color) {
 
 void image_process_t::circle(const color_t color, const unsigned x, const unsigned y, const unsigned radius,
                              bool fill) {
-    const auto s_radius = static_cast<signed>(radius);
     ASSERT(radius != 0, "Can't draw circle with zero radius");
+    const auto s_radius = static_cast<signed>(radius);
     for (signed i = -s_radius + 1; i <= s_radius - 1; ++i) {
-        for (signed j = -s_radius + abs(i) + 1; j <= s_radius - abs(i) - 1; ++j) {
-            if (fill || j == -s_radius + abs(i) + 1 || j == s_radius - abs(i) - 1) {
+        for (signed j = -s_radius + 1; j <= s_radius - 1; ++j) {
+            if (pow(i, 2) + pow(j, 2) <= pow(radius, 2)) {
                 set_pixel(color, x + i, y + j);
             }
         }
