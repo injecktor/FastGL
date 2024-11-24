@@ -42,6 +42,8 @@ private:
     // if 1 it's background otherwise it's not
     vector<color_t> m_image_buffer;
     vector<uint8_t> m_background_bit_mask;
+
+    static bool is_in_circle(signed x, signed y, unsigned radius);
 };
 
 #endif //IMAGE_PROCESS_H

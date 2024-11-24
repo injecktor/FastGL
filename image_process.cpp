@@ -27,12 +27,14 @@ void image_process_t::set_background(const color_t color) {
 }
 
 void image_process_t::circle(const color_t color, const unsigned x, const unsigned y, const unsigned radius,
-                             bool fill) {
+                             const bool fill) {
     ASSERT(radius != 0, "Can't draw circle with zero radius");
     const auto s_radius = static_cast<signed>(radius);
     for (signed i = -s_radius + 1; i <= s_radius - 1; ++i) {
         for (signed j = -s_radius + 1; j <= s_radius - 1; ++j) {
-            if (pow(i, 2) + pow(j, 2) <= pow(radius, 2)) {
+            if (is_in_circle(i, j, radius) && (fill || i == -s_radius + 1 || j == -s_radius + 1 || !
+                                               is_in_circle(i - 1, j, radius) || !is_in_circle(i + 1, j, radius)
+                                               || !is_in_circle(i, j - 1, radius) || !is_in_circle(i, j + 1, radius))) {
                 set_pixel(color, x + i, y + j);
             }
         }
@@ -106,4 +108,11 @@ void image_process_t::generate_image(const string &file_name, const image_type i
     i_g->generate(m_image_buffer);
     file.close();
     delete i_g;
+}
+
+bool image_process_t::is_in_circle(const signed x, const signed y, const unsigned radius) {
+    if (pow(x, 2) + pow(y, 2) <= pow(radius, 2)) {
+        return true;
+    }
+    return false;
 }
