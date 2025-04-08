@@ -1,5 +1,5 @@
-#ifndef PNG_INIT_H
-#define PNG_INIT_H
+#ifndef CGE_PNG_H
+#define CGE_PNG_H
 
 #include <iostream>
 #include <fstream>
@@ -7,14 +7,12 @@
 
 #include "logging.h"
 
-using namespace std;
-
 class png_t {
 public:
-    void init(ofstream *file, unsigned int width, unsigned int height);
+    void init(std::ofstream *file, unsigned int width, unsigned int height);
 
 private:
-    ofstream *m_file = nullptr;
+    std::ofstream *m_file = nullptr;
 
     // const uint8_t m_png_structure_bytes[] = {
     //     0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A
@@ -39,4 +37,4 @@ private:
 };
 
 
-#endif //PNG_INIT_H
+#endif //CGE_PNG_H

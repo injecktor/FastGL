@@ -1,16 +1,30 @@
-cmake_minimum_required(VERSION 3.29)
-project(image_processing)
+cmake_minimum_required(VERSION 3.22)
+project(cge)
 
 set(CMAKE_CXX_STANDARD 20)
 
-add_executable(image_processing main.cpp
+add_executable(cge main.cpp
         logging.h
-        png.cpp
-        png.h
-        ppm.cpp
-        ppm.h
-        color.h
         color.cpp
-        image_process.cpp
-        image_process.h
-        image_generator.h)
+        color.h
+        frame_process.cpp
+        frame_process.h
+        frame_generator.h
+        image_format.h
+        
+        frame_generators/cge_sdl2.cpp
+        frame_generators/cge_sdl2.h
+
+        image_formats/cge_png.cpp
+        image_formats/cge_png.h
+        image_formats/cge_ppm.cpp
+        image_formats/cge_ppm.h
+        )
+
+target_include_directories(cge PRIVATE 
+        .
+        image_formats
+        frame_generators)
+
+target_compile_definitions(cge PRIVATE
+        CGE_CORE_SDL2)

@@ -6,88 +6,70 @@
 
 #include "logging.h"
 
-using namespace std;
-
 class color_t {
 public:
-    enum colors : uint8_t {
-        black,
-        white,
-        red,
-        green,
-        blue
+    enum : uint32_t {
+        black = 0xFF000000,
+        white = 0xFFFFFFFF,
+        red = 0xFFFF0000,
+        green = 0xFF00FF00,
+        blue = 0xFF0000FF
     };
-
-    explicit color_t(const colors color) {
-        switch (color) {
-            case black: {
-                init(0x000000);
-            }
-            break;
-            case white: {
-                init(0xFFFFFF);
-            }
-            break;
-            case red: {
-                init(0xFF0000);
-            }
-            break;
-            case green: {
-                init(0x00FF00);
-            }
-            break;
-            case blue: {
-                init(0x0000FF);
-            }
-            break;
-        }
-    }
 
     explicit color_t(const unsigned hex) {
         init(hex);
     }
+    explicit color_t(unsigned hex, float alpha) {
+        init(hex & 0xffffff | static_cast<unsigned>(alpha * 0xff) << 24);
+    }
+    explicit color_t(unsigned hex, double alpha) {
+        init(hex & 0xffffff | static_cast<unsigned>(alpha * 0xff) << 24);
+    }
 
-    [[nodiscard]] uint8_t getR() const {
+    [[nodiscard]] uint8_t get_a() const {
+        return a;
+    }
+    [[nodiscard]] uint8_t get_r() const {
         return r;
     }
-
-    [[nodiscard]] uint8_t getG() const {
+    [[nodiscard]] uint8_t get_g() const {
         return g;
     }
-
-    [[nodiscard]] uint8_t getB() const {
+    [[nodiscard]] uint8_t get_b() const {
         return b;
     }
 
 private:
-    uint8_t r = 0, g = 0, b = 0;
+    uint8_t a = 1, r = 0, g = 0, b = 0;
 
     void init(const unsigned hex) {
-        r = (hex >> 16) & 255;
-        g = (hex >> 8) & 255;
-        b = hex & 255;
+        a = (hex >> 24) & 0xff;
+        r = (hex >> 16) & 0xff;
+        g = (hex >> 8) & 0xff;
+        b = hex & 0xff;
     }
 };
 
 class line_t {
-    enum class line_type_t {
+public:
+    enum class type_t {
         solid,
         dotted,
         dashed,
         dotdash
     };
 
-    color_t m_color;
-    unsigned m_line_width;
-    uint16_t m_bit_mask;
-    uint8_t m_bit_offset = 0;
-
-public:
-    line_t(color_t color, line_type_t line_type, unsigned line_width);
+    line_t(color_t color, unsigned width, type_t type);
 
     [[nodiscard]] uint8_t get_next_mask_bit();
 
     void set_bit_offset_start();
+
+private:
+    color_t m_color;
+    unsigned m_width;
+    uint16_t m_bit_mask;
+    uint8_t m_bit_offset = 0;
 };
 
 #endif //COLOR_H

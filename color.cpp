@@ -1,18 +1,18 @@
 #include "color.h"
 
-line_t::line_t(color_t color, line_type_t line_type, unsigned line_width) : m_color(color),
-                                                                            m_line_width(line_width) {
-    switch (line_type) {
-        case line_type_t::solid: {
+line_t::line_t(color_t color, unsigned width, type_t type) : m_color(color),
+                                                                            m_width(width) {
+    switch (type) {
+        case type_t::solid: {
             m_bit_mask = 0b11111111'11111111;
         } break;
-        case line_type_t::dotted: {
+        case type_t::dotted: {
             m_bit_mask = 0b11001100'11001100;
         } break;
-        case line_type_t::dashed: {
+        case type_t::dashed: {
             m_bit_mask = 0b11110000'11110000;
         } break;
-        case line_type_t::dotdash: {
+        case type_t::dotdash: {
             m_bit_mask = 0b11110000'01100000;
         } break;
         default: {
