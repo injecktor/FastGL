@@ -102,7 +102,8 @@ void frame_process_t::generate_image(const std::string &file_name, const image_t
         }
         break;
     }
-    file.open("../" + file_name + '.' + img_gen->get_format_extension(), std::ofstream::out | std::ofstream::binary);
+    file.open("images/" + file_name + '.' + img_gen->get_format_extension(), 
+        std::ofstream::out | std::ofstream::binary);
     ASSERT(file.is_open(), "Could not open file");
     img_gen->init();
     img_gen->generate(m_image_buffer);

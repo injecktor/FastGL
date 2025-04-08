@@ -1,0 +1,1 @@
+In this directory with be saved generated images
