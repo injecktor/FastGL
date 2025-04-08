@@ -4,14 +4,17 @@
 #include <cmath>
 #include <memory>
 
-#include "include_frame_core.h"
+#include "include_graphic_core.h"
 #include "cge_ppm.h"
 #include "cge_png.h"
 #include "color.h"
 
+#define MAP(value, from_lower_limit, from_upper_limit, to_lower_limit, to_upper_limit) \
+    (to_lower_limit + (value - from_lower_limit) * (to_upper_limit - to_lower_limit) / (from_upper_limit - from_lower_limit))
+
 class frame_process_t {
 public:
-    enum image_type {
+    enum class image_type {
         ppm,
         png
     };

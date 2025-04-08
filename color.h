@@ -38,6 +38,9 @@ public:
     [[nodiscard]] uint8_t get_b() const {
         return b;
     }
+    [[nodiscard]] uint32_t get_hex() const {
+        return (a << 24) | (r << 16) | (g << 8) | b;
+    }
 
 private:
     uint8_t a = 1, r = 0, g = 0, b = 0;

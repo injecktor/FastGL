@@ -11,6 +11,7 @@ add_executable(cge main.cpp
         frame_process.h
         frame_generator.h
         image_format.h
+        include_graphic_core.h
         
         frame_generators/cge_sdl2.cpp
         frame_generators/cge_sdl2.h
@@ -22,7 +23,7 @@ add_executable(cge main.cpp
         )
 
 target_include_directories(cge PRIVATE 
-        .
+        ${CMAKE_CURRENT_SOURCE_DIR}
         image_formats
         frame_generators)
 
