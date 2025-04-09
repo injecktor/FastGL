@@ -44,26 +44,37 @@ void frame_process_t::circle(const color_t color, const unsigned x, const unsign
 
 void frame_process_t::line(const color_t color, const unsigned width, const unsigned x1, const unsigned y1,
                            const unsigned x2, const unsigned y2) {
-    double x = x1, y = y1;
+    double x, y, tangent;
+    unsigned end;
+    bool along_x;
     const double dx = static_cast<signed>(x2) - static_cast<signed>(x1);
     const double dy = static_cast<signed>(y2) - static_cast<signed>(y1);
     if (abs(dx) > abs(dy)) {
-        while (static_cast<unsigned>(x) != x2) {
-            const double tangent = dy / dx;
-            const double upper = ceil(y);
-            const double lower = floor(y);
+        x = x1;
+        y = y1;
+        tangent = dy / dx;
+        end = x2;
+        along_x = true;
+    } else {
+        x = y1;
+        y = x1;
+        tangent = dx / dy;
+        end = y2;
+        along_x = false;
+    }
+
+    while (static_cast<unsigned>(x) != end) {
+        const double upper = ceil(y);
+        const double lower = floor(y);
+        if (along_x) {
             set_pixel(color_t(color.get_hex(), 1. - (upper - y)), static_cast<unsigned>(x), static_cast<unsigned>(upper));
             set_pixel(color_t(color.get_hex(), 1. - (y - lower)), static_cast<unsigned>(x), static_cast<unsigned>(lower));
-            y = y + tangent;
-            x += 1;
+        } else {
+            set_pixel(color_t(color.get_hex(), 1. - (upper - y)), static_cast<unsigned>(upper), static_cast<unsigned>(x));
+            set_pixel(color_t(color.get_hex(), 1. - (y - lower)), static_cast<unsigned>(lower), static_cast<unsigned>(x));
         }
-    } else {
-        while (static_cast<unsigned>(y) != y2) {
-            const double tangent = dx / dy;
-            set_pixel(color, static_cast<unsigned>(round(x)), static_cast<unsigned>(y));
-            x = x + tangent;
-            y += 1;
-        }
+        y = y + tangent;
+        x += 1;
     }
 }
 
