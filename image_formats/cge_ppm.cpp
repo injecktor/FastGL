@@ -12,10 +12,11 @@ void ppm_t::init() {
     *m_file << "255" << std::endl; //rgb max
 }
 
-unsigned ppm_t::generate(const std::vector<color_t> &image_buffer) {
+unsigned ppm_t::generate(const std::vector<color_t> &image_buffer, const color_t background) {
     for (auto pixel: image_buffer) {
-        *m_file << std::to_string(pixel.get_r()) << ' ' << std::to_string(pixel.get_g()) << ' ' 
-        << std::to_string(pixel.get_b()) << std::endl;
+        auto alphaed = color_t::apply_alpha(pixel, background);
+        *m_file << std::to_string(alphaed.get_r()) << ' ' << std::to_string(alphaed.get_g()) << ' ' 
+        << std::to_string(alphaed.get_b()) << std::endl;
     }
     return 0;
 }

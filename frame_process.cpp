@@ -2,18 +2,19 @@
 
 frame_process_t::frame_process_t(const unsigned width, const unsigned height) : m_width(width),
     m_height(height),
-    m_resolution(width * height) {
-    m_image_buffer.reserve(m_resolution);
+    m_resolution(width * height),
+    m_background_color(color_t::white) {
+    m_frame_buffer.reserve(m_resolution);
     m_background_bit_mask.reserve((m_resolution - 1) / 8 + 1);
     for (unsigned i = 0; i < m_resolution; ++i) {
         m_background_bit_mask.emplace_back(0xFF);
-        m_image_buffer.emplace_back(color_t::white);
+        m_frame_buffer.emplace_back(m_background_color);
     }
 }
 
 void frame_process_t::set_pixel(const color_t color, const unsigned x, const unsigned y) {
     if (x >= m_width || y >= m_height) return;
-    m_image_buffer[y * m_width + x] = color;
+    m_frame_buffer[y * m_width + x] = color;
     m_background_bit_mask[(y * m_width + x) / 8] &= ~(1 << ((y * m_width + x) % 8));
 }
 
@@ -21,7 +22,7 @@ void frame_process_t::set_pixel(const color_t color, const unsigned x, const uns
 void frame_process_t::set_background(const color_t color) {
     for (unsigned i = 0; i < m_resolution; ++i) {
         if (m_background_bit_mask[i / 8] & (1 << (i % 8))) {
-            m_image_buffer[i] = color;
+            m_frame_buffer[i] = color;
         }
     }
 }
@@ -111,7 +112,7 @@ void frame_process_t::generate_image(const std::string &file_name, const image_t
         std::ofstream::out | std::ofstream::binary);
     ASSERT(file.is_open(), "Could not open file");
     img_gen->init();
-    img_gen->generate(m_image_buffer);
+    img_gen->generate(m_frame_buffer, m_background_color);
     file.close();
 }
 
@@ -120,4 +121,12 @@ bool frame_process_t::is_in_circle(const signed x, const signed y, const unsigne
         return true;
     }
     return false;
+}
+
+void frame_process_t::apply_alpha() {
+    for (size_t y = 0; y < m_height; y++) {
+        for (size_t x = 0; x < m_width; x++) {
+            set_pixel(color_t::apply_alpha(m_frame_buffer[y * m_width + x], m_background_color), x, y);
+        }
+    }
 }

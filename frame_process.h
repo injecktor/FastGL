@@ -40,13 +40,16 @@ private:
     unsigned m_width;
     unsigned m_height;
     unsigned m_resolution;
+
+    color_t m_background_color;
     // if 1 it's background otherwise it's not
-    std::vector<color_t> m_image_buffer;
+    std::vector<color_t> m_frame_buffer;
     std::vector<uint8_t> m_background_bit_mask;
 
     std::shared_ptr<frame_generator_t> frame_gen;
 
     static bool is_in_circle(signed x, signed y, unsigned radius);
+    void apply_alpha();
 };
 
 #endif //FRAME_PROCESS_H

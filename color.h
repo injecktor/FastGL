@@ -9,48 +9,33 @@
 class color_t {
 public:
     enum : uint32_t {
-        black = 0xFF000000,
-        white = 0xFFFFFFFF,
-        red = 0xFFFF0000,
-        green = 0xFF00FF00,
-        blue = 0xFF0000FF
+        black = 0xff000000,
+        white = 0xffffffff,
+        red = 0xffff0000,
+        green = 0xff00ff00,
+        blue = 0xff0000ff
     };
 
-    explicit color_t(const unsigned hex) {
-        init(hex);
-    }
-    explicit color_t(unsigned hex, float alpha) {
-        init(hex & 0xffffff | static_cast<unsigned>(alpha * 0xff) << 24);
-    }
-    explicit color_t(unsigned hex, double alpha) {
-        init(hex & 0xffffff | static_cast<unsigned>(alpha * 0xff) << 24);
-    }
+    explicit color_t();
+    explicit color_t(uint8_t a, uint8_t r, uint8_t g, uint8_t b);
+    explicit color_t(const unsigned hex);
+    explicit color_t(unsigned hex, float alpha);
+    explicit color_t(unsigned hex, double alpha);
 
-    [[nodiscard]] uint8_t get_a() const {
-        return a;
-    }
-    [[nodiscard]] uint8_t get_r() const {
-        return r;
-    }
-    [[nodiscard]] uint8_t get_g() const {
-        return g;
-    }
-    [[nodiscard]] uint8_t get_b() const {
-        return b;
-    }
-    [[nodiscard]] uint32_t get_hex() const {
-        return (a << 24) | (r << 16) | (g << 8) | b;
-    }
+    void set(const unsigned hex);
+    void set(unsigned hex, float alpha);
+    void set(unsigned hex, double alpha);
+
+    [[nodiscard]] uint8_t get_a() const;
+    [[nodiscard]] uint8_t get_r() const;
+    [[nodiscard]] uint8_t get_g() const;
+    [[nodiscard]] uint8_t get_b() const;
+    [[nodiscard]] unsigned get_hex() const;
+
+    [[nodiscard]] static color_t apply_alpha(color_t color_with_alpha, color_t background);
 
 private:
     uint8_t a = 1, r = 0, g = 0, b = 0;
-
-    void init(const unsigned hex) {
-        a = (hex >> 24) & 0xff;
-        r = (hex >> 16) & 0xff;
-        g = (hex >> 8) & 0xff;
-        b = hex & 0xff;
-    }
 };
 
 class line_t {
