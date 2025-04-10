@@ -7,6 +7,8 @@ add_executable(cge main.cpp
         logging.h
         color.cpp
         color.h
+        line.cpp
+        line.h
         frame_process.cpp
         frame_process.h
         frame_generator.h

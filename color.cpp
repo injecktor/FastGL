@@ -12,8 +12,8 @@ color_t::color_t(const unsigned hex) {
     set(hex);
 }
 
-color_t::color_t(unsigned hex, float alpha) {
-    set(hex & 0xffffff | static_cast<unsigned>(alpha * 0xff) << 24);
+color_t::color_t(color_t color, double alpha) {
+    set(color.get_hex() & 0xffffff | static_cast<unsigned>(alpha * 0xff) << 24);
 }
 
 color_t::color_t(unsigned hex, double alpha) {
@@ -25,9 +25,6 @@ void color_t::set(const unsigned hex) {
     m_r = (hex >> 16) & 0xff;
     m_g = (hex >> 8) & 0xff;
     m_b = hex & 0xff;
-}
-void color_t::set(unsigned hex, float alpha) {
-    set(hex & 0xffffff | static_cast<unsigned>(alpha * 0xff) << 24);
 }
 void color_t::set(unsigned hex, double alpha) {
     set(hex & 0xffffff | static_cast<unsigned>(alpha * 0xff) << 24);

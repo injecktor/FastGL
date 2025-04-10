@@ -20,7 +20,7 @@ enum class antialiasing_t {
 struct point2_t {
     unsigned x;
     unsigned y;
-    point2_t() : x(0), y(0);
+    point2_t(unsigned _x = 0, unsigned _y = 0) : x(_x), y(_y){};
 };
 
 class color_t {
@@ -36,11 +36,10 @@ public:
     explicit color_t();
     explicit color_t(uint8_t a, uint8_t r, uint8_t g, uint8_t b);
     explicit color_t(const unsigned hex);
-    explicit color_t(unsigned hex, float alpha);
+    explicit color_t(color_t color, double alpha);
     explicit color_t(unsigned hex, double alpha);
 
     void set(const unsigned hex);
-    void set(unsigned hex, float alpha);
     void set(unsigned hex, double alpha);
 
     uint8_t& a();

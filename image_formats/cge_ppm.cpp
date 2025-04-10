@@ -15,8 +15,8 @@ void ppm_t::init() {
 unsigned ppm_t::generate(const std::vector<color_t> &image_buffer, const color_t background) {
     for (auto pixel: image_buffer) {
         auto alphaed = color_t::apply_alpha(pixel, background);
-        *m_file << std::to_string(alphaed.get_r()) << ' ' << std::to_string(alphaed.get_g()) << ' ' 
-        << std::to_string(alphaed.get_b()) << std::endl;
+        *m_file << std::to_string(alphaed.r()) << ' ' << std::to_string(alphaed.g()) << ' ' 
+        << std::to_string(alphaed.b()) << std::endl;
     }
     return 0;
 }

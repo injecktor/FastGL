@@ -66,11 +66,11 @@ void frame_process_t::line(line_t line, point2_t start, point2_t end) {
         const double upper = ceil(y);
         const double lower = floor(y);
         if (along_x) {
-            set_pixel(color_t(line.color().get_hex(), 1. - (upper - y)), static_cast<unsigned>(x), static_cast<unsigned>(upper));
-            set_pixel(color_t(line.color().get_hex(), 1. - (y - lower)), static_cast<unsigned>(x), static_cast<unsigned>(lower));
+            set_pixel(color_t(line.color(), 1. - (upper - y)), static_cast<unsigned>(x), static_cast<unsigned>(upper));
+            set_pixel(color_t(line.color(), 1. - (y - lower)), static_cast<unsigned>(x), static_cast<unsigned>(lower));
         } else {
-            set_pixel(color_t(line.color().get_hex(), 1. - (upper - y)), static_cast<unsigned>(upper), static_cast<unsigned>(x));
-            set_pixel(color_t(line.color().get_hex(), 1. - (y - lower)), static_cast<unsigned>(lower), static_cast<unsigned>(x));
+            set_pixel(color_t(line.color(), 1. - (upper - y)), static_cast<unsigned>(upper), static_cast<unsigned>(x));
+            set_pixel(color_t(line.color(), 1. - (y - lower)), static_cast<unsigned>(lower), static_cast<unsigned>(x));
         }
         y = y + tangent;
         x += 1;

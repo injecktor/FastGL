@@ -1,6 +1,6 @@
 #include "line.h"
 
-line_t::line_t(color_t color, unsigned thickness = 1, type_t type, antialiasing_t aa)
+line_t::line_t(color_t color, unsigned thickness, type_t type, antialiasing_t aa)
 	: m_color(color), m_thickness(thickness), m_aa(aa) {
     switch (type) {
         case type_t::solid: {
