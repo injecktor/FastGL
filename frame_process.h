@@ -8,6 +8,7 @@
 #include "cge_ppm.h"
 #include "cge_png.h"
 #include "color.h"
+#include "line.h"
 
 #define MAP(value, from_lower_limit, from_upper_limit, to_lower_limit, to_upper_limit) \
     (to_lower_limit + (value - from_lower_limit) * (to_upper_limit - to_lower_limit) / (from_upper_limit - from_lower_limit))
@@ -24,8 +25,8 @@ public:
     void set_pixel(color_t color, unsigned x, unsigned y);
     void set_background(color_t color);
     void circle(color_t color, unsigned x, unsigned y, unsigned radius, bool fill = true);
-    void line(color_t color, unsigned width, unsigned x1, unsigned y1, unsigned x2, unsigned y2);
-    void border(color_t color, line_t line_type);
+    void line(line_t line, point2_t start, point2_t end);
+    // void border(color_t color, line_t line_type);
     void square(color_t color, unsigned width, unsigned x1, unsigned y1, unsigned length);
     void rectangle(color_t color, unsigned width, unsigned x1, unsigned y1, unsigned x2, unsigned y2);
     void triangle(color_t color, unsigned width, unsigned x1, unsigned y1, unsigned x2, unsigned y2, unsigned x3,

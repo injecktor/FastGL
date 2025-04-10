@@ -42,36 +42,35 @@ void frame_process_t::circle(const color_t color, const unsigned x, const unsign
     }
 }
 
-void frame_process_t::line(const color_t color, const unsigned width, const unsigned x1, const unsigned y1,
-                           const unsigned x2, const unsigned y2) {
+void frame_process_t::line(line_t line, point2_t start, point2_t end) {
     double x, y, tangent;
-    unsigned end;
+    unsigned last;
     bool along_x;
-    const double dx = static_cast<signed>(x2) - static_cast<signed>(x1);
-    const double dy = static_cast<signed>(y2) - static_cast<signed>(y1);
+    const double dx = static_cast<signed>(end.x) - static_cast<signed>(start.x);
+    const double dy = static_cast<signed>(end.y) - static_cast<signed>(start.y);
     if (abs(dx) > abs(dy)) {
-        x = x1;
-        y = y1;
+        x = start.x;
+        y = start.y;
         tangent = dy / dx;
-        end = x2;
+        last = end.x;
         along_x = true;
     } else {
-        x = y1;
-        y = x1;
+        x = start.y;
+        y = start.x;
         tangent = dx / dy;
-        end = y2;
+        last = end.y;
         along_x = false;
     }
 
-    while (static_cast<unsigned>(x) != end) {
+    while (static_cast<unsigned>(x) <= last) {
         const double upper = ceil(y);
         const double lower = floor(y);
         if (along_x) {
-            set_pixel(color_t(color.get_hex(), 1. - (upper - y)), static_cast<unsigned>(x), static_cast<unsigned>(upper));
-            set_pixel(color_t(color.get_hex(), 1. - (y - lower)), static_cast<unsigned>(x), static_cast<unsigned>(lower));
+            set_pixel(color_t(line.color().get_hex(), 1. - (upper - y)), static_cast<unsigned>(x), static_cast<unsigned>(upper));
+            set_pixel(color_t(line.color().get_hex(), 1. - (y - lower)), static_cast<unsigned>(x), static_cast<unsigned>(lower));
         } else {
-            set_pixel(color_t(color.get_hex(), 1. - (upper - y)), static_cast<unsigned>(upper), static_cast<unsigned>(x));
-            set_pixel(color_t(color.get_hex(), 1. - (y - lower)), static_cast<unsigned>(lower), static_cast<unsigned>(x));
+            set_pixel(color_t(line.color().get_hex(), 1. - (upper - y)), static_cast<unsigned>(upper), static_cast<unsigned>(x));
+            set_pixel(color_t(line.color().get_hex(), 1. - (y - lower)), static_cast<unsigned>(lower), static_cast<unsigned>(x));
         }
         y = y + tangent;
         x += 1;
@@ -80,26 +79,26 @@ void frame_process_t::line(const color_t color, const unsigned width, const unsi
 
 void frame_process_t::square(const color_t color, const unsigned width, const unsigned x1, const unsigned y1,
                              const unsigned length) {
-    line(color, width, x1, y1, x1 + length, y1);
-    line(color, width, x1, y1, x1, y1 + length);
-    line(color, width, x1 + length, y1, x1 + length, y1 + length);
-    line(color, width, x1, y1 + length, x1 + length, y1 + length);
+    // line(color, width, x1, y1, x1 + length, y1);
+    // line(color, width, x1, y1, x1, y1 + length);
+    // line(color, width, x1 + length, y1, x1 + length, y1 + length);
+    // line(color, width, x1, y1 + length, x1 + length, y1 + length);
 }
 
 void frame_process_t::rectangle(const color_t color, const unsigned width, const unsigned x1, const unsigned y1,
                                 const unsigned x2, const unsigned y2) {
-    line(color, width, x1, y1, x2, y1);
-    line(color, width, x1, y1, x1, y2);
-    line(color, width, x2, y1, x2, y2);
-    line(color, width, x1, y2, x2, y2);
+    // line(color, width, x1, y1, x2, y1);
+    // line(color, width, x1, y1, x1, y2);
+    // line(color, width, x2, y1, x2, y2);
+    // line(color, width, x1, y2, x2, y2);
 }
 
 void frame_process_t::triangle(const color_t color, const unsigned width, const unsigned x1, const unsigned y1,
                                const unsigned x2, const unsigned y2, const unsigned x3,
                                const unsigned y3) {
-    line(color, width, x1, y1, x2, y2);
-    line(color, width, x3, y3, x2, y2);
-    line(color, width, x1, y1, x3, y3);
+    // line(color, width, x1, y1, x2, y2);
+    // line(color, width, x3, y3, x2, y2);
+    // line(color, width, x1, y1, x3, y3);
 }
 
 void frame_process_t::generate_image(const std::string &file_name, const image_type image_type) const {

@@ -6,6 +6,23 @@
 
 #include "logging.h"
 
+enum class type_t {
+    solid,
+    dotted,
+    dashed,
+    dotdash
+};
+enum class antialiasing_t {
+    none,
+    wu
+};
+
+struct point2_t {
+    unsigned x;
+    unsigned y;
+    point2_t() : x(0), y(0);
+};
+
 class color_t {
 public:
     enum : uint32_t {
@@ -26,38 +43,16 @@ public:
     void set(unsigned hex, float alpha);
     void set(unsigned hex, double alpha);
 
-    [[nodiscard]] uint8_t get_a() const;
-    [[nodiscard]] uint8_t get_r() const;
-    [[nodiscard]] uint8_t get_g() const;
-    [[nodiscard]] uint8_t get_b() const;
+    uint8_t& a();
+    uint8_t& r();
+    uint8_t& g();
+    uint8_t& b();
     [[nodiscard]] unsigned get_hex() const;
 
     [[nodiscard]] static color_t apply_alpha(color_t color_with_alpha, color_t background);
 
 private:
-    uint8_t a = 1, r = 0, g = 0, b = 0;
-};
-
-class line_t {
-public:
-    enum class type_t {
-        solid,
-        dotted,
-        dashed,
-        dotdash
-    };
-
-    line_t(color_t color, unsigned width, type_t type);
-
-    [[nodiscard]] uint8_t get_next_mask_bit();
-
-    void set_bit_offset_start();
-
-private:
-    color_t m_color;
-    unsigned m_width;
-    uint16_t m_bit_mask;
-    uint8_t m_bit_offset = 0;
+    uint8_t m_a = 1, m_r = 0, m_g = 0, m_b = 0;
 };
 
 #endif //COLOR_H
