@@ -10,7 +10,7 @@ public:
 
     color_t& color();
     unsigned& thickness();
-    antialiasing_t& get_antialiasing();
+    antialiasing_t& antialiasing();
 
     [[nodiscard]] uint8_t get_next_mask_bit();
 

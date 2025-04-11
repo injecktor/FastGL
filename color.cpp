@@ -8,7 +8,7 @@ color_t::color_t(uint8_t a, uint8_t r, uint8_t g, uint8_t b)
     : m_a(a), m_r(r), m_g(g), m_b(b) {
 }
 
-color_t::color_t(const unsigned hex) {
+color_t::color_t(unsigned hex) {
     set(hex);
 }
 
@@ -20,7 +20,7 @@ color_t::color_t(unsigned hex, double alpha) {
     set(hex & 0xffffff | static_cast<unsigned>(alpha * 0xff) << 24);
 }
 
-void color_t::set(const unsigned hex) {
+void color_t::set(unsigned hex) {
     m_a = (hex >> 24) & 0xff;
     m_r = (hex >> 16) & 0xff;
     m_g = (hex >> 8) & 0xff;

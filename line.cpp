@@ -29,7 +29,7 @@ unsigned& line_t::thickness() {
     return m_thickness;
 }
 
-antialiasing_t& line_t::get_antialiasing() {
+antialiasing_t& line_t::antialiasing() {
     return m_aa;
 }
 

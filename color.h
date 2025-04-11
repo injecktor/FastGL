@@ -35,11 +35,11 @@ public:
 
     explicit color_t();
     explicit color_t(uint8_t a, uint8_t r, uint8_t g, uint8_t b);
-    explicit color_t(const unsigned hex);
+    explicit color_t(unsigned hex);
     explicit color_t(color_t color, double alpha);
     explicit color_t(unsigned hex, double alpha);
 
-    void set(const unsigned hex);
+    void set(unsigned hex);
     void set(unsigned hex, double alpha);
 
     uint8_t& a();
