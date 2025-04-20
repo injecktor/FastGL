@@ -70,17 +70,17 @@ void frame_process_t::line(line_t line, point2_t start, point2_t end) {
     while (static_cast<unsigned>(x) <= last) {
         switch (line.antialiasing()) {
             case antialiasing_t::none: {
-                upper_alpha = 1.;
-                lower_alpha = 1.;
                 upper_coord = round(y);
                 lower_coord = round(y);  
+                upper_alpha = 1.;
+                lower_alpha = 1.;
             }
             break;
             case antialiasing_t::wu: {
-                upper_alpha = 1. - (upper_coord - y);
-                lower_alpha = 1. - (y - lower_coord);
                 upper_coord = ceil(y);
-                lower_coord = floor(y);    
+                lower_coord = floor(y);
+                upper_alpha = 1. - (upper_coord - y);
+                lower_alpha = 1. - (y - lower_coord);  
             }
             break;
         }
