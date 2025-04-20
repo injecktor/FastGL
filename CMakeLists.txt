@@ -27,7 +27,9 @@ add_executable(cge main.cpp
 target_include_directories(cge PRIVATE 
         ${CMAKE_CURRENT_SOURCE_DIR}
         image_formats
-        frame_generators)
+        frame_generators
+        )
 
 target_compile_definitions(cge PRIVATE
-        CGE_CORE_SDL2)
+        CGE_CORE_SDL2
+        )
