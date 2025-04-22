@@ -46,7 +46,7 @@ uint8_t& color_t::b() {
     return (m_a << 24) | (m_r << 16) | (m_g << 8) | m_b;
 }
 
-[[nodiscard]] color_t color_t::apply_alpha(color_t color_with_alpha, color_t background) {
+[[nodiscard]] color_t color_t::alpha_to_color(color_t color_with_alpha, color_t background) {
     signed r_diff = static_cast<signed>(color_with_alpha.r()) - static_cast<signed>(background.r());
     signed g_diff = static_cast<signed>(color_with_alpha.g()) - static_cast<signed>(background.g());
     signed b_diff = static_cast<signed>(color_with_alpha.b()) - static_cast<signed>(background.b());

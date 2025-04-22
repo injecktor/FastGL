@@ -50,7 +50,7 @@ private:
     std::shared_ptr<frame_generator_t> frame_gen;
 
     static bool is_in_circle(signed x, signed y, unsigned radius);
-    void apply_alpha();
+    void alpha_to_color();
 };
 
 #endif //FRAME_PROCESS_H

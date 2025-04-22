@@ -154,10 +154,10 @@ bool frame_process_t::is_in_circle(const signed x, const signed y, const unsigne
     return false;
 }
 
-void frame_process_t::apply_alpha() {
-    for (size_t y = 0; y < m_height; y++) {
-        for (size_t x = 0; x < m_width; x++) {
-            set_pixel(color_t::apply_alpha(m_frame_buffer[y * m_width + x], m_background_color), { x, y });
+void frame_process_t::alpha_to_color() {
+    for (unsigned y = 0; y < m_height; y++) {
+        for (unsigned x = 0; x < m_width; x++) {
+            set_pixel(color_t::alpha_to_color(m_frame_buffer[y * m_width + x], m_background_color), { x, y });
         }
     }
 }
