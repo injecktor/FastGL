@@ -7,7 +7,7 @@ frame_process_t::frame_process_t(unsigned width, unsigned height) : m_width(widt
     m_frame_buffer.reserve(m_resolution);
     m_background_bit_mask.reserve((m_resolution - 1) / 8 + 1);
     for (unsigned i = 0; i < m_resolution; ++i) {
-        m_background_bit_mask.emplace_back(0xFF);
+        m_background_bit_mask.emplace_back(0xff);
         m_frame_buffer.emplace_back(m_background_color);
     }
 }
@@ -114,12 +114,11 @@ void frame_process_t::line(line_t line, point2_t start, point2_t end) {
     }
 }
 
-void frame_process_t::square(color_t color, unsigned width, unsigned x1, unsigned y1,
-                             const unsigned length) {
-    // line(color, width, x1, y1, x1 + length, y1);
-    // line(color, width, x1, y1, x1, y1 + length);
-    // line(color, width, x1 + length, y1, x1 + length, y1 + length);
-    // line(color, width, x1, y1 + length, x1 + length, y1 + length);
+void frame_process_t::square(line_t line, point2_t point, unsigned length) {
+    frame_process_t::line(line, { point.x, point.y }, { point.x + length, point.y });
+    frame_process_t::line(line, { point.x, point.y }, { point.x, point.y + length });
+    frame_process_t::line(line, { point.x + length, point.y }, { point.x + length, point.y + length });
+    frame_process_t::line(line, { point.x, point.y + length }, { point.x + length, point.y + length });
 }
 
 void frame_process_t::rectangle(color_t color, unsigned width, unsigned x1, unsigned y1,
