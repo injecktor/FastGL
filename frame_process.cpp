@@ -45,21 +45,23 @@ void frame_process_t::circle(color_t color, unsigned x, unsigned y, unsigned rad
 void frame_process_t::line(line_t line, point2_t start, point2_t end) {
     double x, y, tangent;
     unsigned last;
-    bool along_x;
+    bool along_x, positive;
     const double dx = static_cast<signed>(end.x) - static_cast<signed>(start.x);
     const double dy = static_cast<signed>(end.y) - static_cast<signed>(start.y);
     if (abs(dx) > abs(dy)) {
         x = start.x;
         y = start.y;
-        tangent = dy / dx;
         last = end.x;
+        tangent = dy / dx;
         along_x = true;
+        positive = dx > 0;
     } else {
         x = start.y;
         y = start.x;
-        tangent = dx / dy;
         last = end.y;
+        tangent = dx / dy;
         along_x = false;
+        positive = dy > 0;
     }
 
     double upper_coord;
@@ -67,7 +69,7 @@ void frame_process_t::line(line_t line, point2_t start, point2_t end) {
     double upper_alpha;
     double lower_alpha;
 
-    while (static_cast<unsigned>(x) <= last) {
+    while (static_cast<unsigned>(x) != last) {
         switch (line.antialiasing()) {
             case antialiasing_t::none: {
                 upper_coord = round(y);
@@ -92,7 +94,7 @@ void frame_process_t::line(line_t line, point2_t start, point2_t end) {
             set_pixel(color_t(line.color(), lower_alpha), { static_cast<unsigned>(lower_coord), static_cast<unsigned>(x) });
         }
         y = y + tangent;
-        x += 1;
+        x = positive ? ++x : --x;
     }
 }
 
