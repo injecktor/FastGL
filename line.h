@@ -12,7 +12,7 @@ public:
     unsigned& thickness();
     antialiasing_t& antialiasing();
 
-    [[nodiscard]] uint8_t get_next_mask_bit();
+    uint8_t get_next_mask_bit();
 
     void set_bit_offset_start();
 

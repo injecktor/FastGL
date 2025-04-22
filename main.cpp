@@ -10,11 +10,13 @@ using namespace std;
 int main() {
     frame_process_t frame_proc(250, 250);
 
-    //frame_proc.line(line_t(color_t(color_t::red), 1, type_t::solid, antialiasing_t::none), {120, 20}, {170, 200});
-    //frame_proc.line(line_t(color_t(color_t::red), 1), {20, 20}, {70, 200});
+    // frame_proc.line(line_t(color_t(color_t::red), 1, type_t::solid, antialiasing_t::none), {120, 20}, {170, 200});
+    frame_proc.line(line_t(color_t(color_t::red, 0.75), 1), {20, 20}, {200, 50});
+    frame_proc.line(line_t(color_t(color_t::red, 0.5), 1), {20, 60}, {200, 90});
+    frame_proc.line(line_t(color_t(color_t::red, 0.25), 1), {20, 90}, {200, 120});
 
-    frame_proc.circle(color_t::red, {100, 100}, 55);
-    frame_proc.set_pixel(color_t::black, {100, 100});
+    //frame_proc.circle(color_t::red, {100, 100}, 55);
+    // frame_proc.set_pixel(color_t::black, {100, 100});
 
     frame_proc.generate_image("image", frame_process_t::image_type::ppm);
 

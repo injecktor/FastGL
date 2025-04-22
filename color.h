@@ -46,9 +46,10 @@ public:
     uint8_t& r();
     uint8_t& g();
     uint8_t& b();
-    [[nodiscard]] unsigned get_hex() const;
+    unsigned get_hex() const;
+    double get_alpha() const;
 
-    [[nodiscard]] static color_t alpha_to_color(color_t color_with_alpha, color_t background);
+    static color_t alpha_to_color(color_t color_with_alpha, color_t background);
 
 private:
     uint8_t m_a = 1, m_r = 0, m_g = 0, m_b = 0;

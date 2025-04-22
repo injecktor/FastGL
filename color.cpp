@@ -27,6 +27,8 @@ void color_t::set(unsigned hex) {
     m_b = hex & 0xff;
 }
 void color_t::set(unsigned hex, double alpha) {
+    if (alpha > 1.) alpha = 1.;
+    if (alpha < 0.) alpha = 0.;
     set(hex & 0xffffff | static_cast<unsigned>(alpha * 0xff) << 24);
 }
 
@@ -42,11 +44,15 @@ uint8_t& color_t::g() {
 uint8_t& color_t::b() {
     return m_b;
 }
-[[nodiscard]] uint32_t color_t::get_hex() const {
+uint32_t color_t::get_hex() const {
     return (m_a << 24) | (m_r << 16) | (m_g << 8) | m_b;
 }
 
-[[nodiscard]] color_t color_t::alpha_to_color(color_t color_with_alpha, color_t background) {
+double color_t::get_alpha() const {
+    return static_cast<double>(m_a) / 0xff;
+}
+
+color_t color_t::alpha_to_color(color_t color_with_alpha, color_t background) {
     signed r_diff = static_cast<signed>(color_with_alpha.r()) - static_cast<signed>(background.r());
     signed g_diff = static_cast<signed>(color_with_alpha.g()) - static_cast<signed>(background.g());
     signed b_diff = static_cast<signed>(color_with_alpha.b()) - static_cast<signed>(background.b());

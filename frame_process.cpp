@@ -103,11 +103,11 @@ void frame_process_t::line(line_t line, point2_t start, point2_t end) {
             break;
         }
         if (along_x) {
-            set_pixel(color_t(line.color(), upper_alpha), { static_cast<unsigned>(x), static_cast<unsigned>(upper_coord) });
-            set_pixel(color_t(line.color(), lower_alpha), { static_cast<unsigned>(x), static_cast<unsigned>(lower_coord) });
+            set_pixel(color_t(line.color(), line.color().get_alpha() * upper_alpha), { static_cast<unsigned>(x), static_cast<unsigned>(upper_coord) });
+            set_pixel(color_t(line.color(), line.color().get_alpha() * lower_alpha), { static_cast<unsigned>(x), static_cast<unsigned>(lower_coord) });
         } else {
-            set_pixel(color_t(line.color(), upper_alpha), { static_cast<unsigned>(upper_coord), static_cast<unsigned>(x) });
-            set_pixel(color_t(line.color(), lower_alpha), { static_cast<unsigned>(lower_coord), static_cast<unsigned>(x) });
+            set_pixel(color_t(line.color(), line.color().get_alpha() * upper_alpha), { static_cast<unsigned>(upper_coord), static_cast<unsigned>(x) });
+            set_pixel(color_t(line.color(), line.color().get_alpha() * lower_alpha), { static_cast<unsigned>(lower_coord), static_cast<unsigned>(x) });
         }
         y = y + tangent;
         x = positive ? ++x : --x;
