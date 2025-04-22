@@ -33,11 +33,11 @@ public:
         blue = 0xff0000ff
     };
 
-    explicit color_t();
-    explicit color_t(uint8_t a, uint8_t r, uint8_t g, uint8_t b);
-    explicit color_t(unsigned hex);
-    explicit color_t(color_t color, double alpha);
-    explicit color_t(unsigned hex, double alpha);
+    color_t();
+    color_t(uint8_t a, uint8_t r, uint8_t g, uint8_t b);
+    color_t(unsigned hex);
+    color_t(color_t color, double alpha);
+    color_t(unsigned hex, double alpha);
 
     void set(unsigned hex);
     void set(unsigned hex, double alpha);

@@ -28,17 +28,33 @@ void frame_process_t::set_background(color_t color) {
     }
 }
 
-void frame_process_t::circle(color_t color, unsigned x, unsigned y, unsigned radius, bool fill) {
+void frame_process_t::circle(color_t color, point2_t center, unsigned radius, bool fill) {
     ASSERT(radius != 0, "Can't draw circle with zero radius");
-    const auto s_radius = static_cast<signed>(radius);
-    for (signed i = -s_radius + 1; i <= s_radius - 1; ++i) {
-        for (signed j = -s_radius + 1; j <= s_radius - 1; ++j) {
-            if (is_in_circle(i, j, radius) && (fill || i == -s_radius + 1 || j == -s_radius + 1 || !
-                                               is_in_circle(i - 1, j, radius) || !is_in_circle(i + 1, j, radius)
-                                               || !is_in_circle(i, j - 1, radius) || !is_in_circle(i, j + 1, radius))) {
-                set_pixel(color, { x + i, y + j });
+    unsigned radius_sqr = radius * radius;
+    unsigned i_sqr = 0, i_sqr_prev = 0, i_sqr_next = 1;
+    unsigned j_sqr = 0, j_sqr_prev = 0, j_sqr_next = 1;
+    for (unsigned i = 0; i <= radius - 1; ++i) {
+        for (unsigned j = 0; j <= radius - 1; ++j) {
+            if (i_sqr + j_sqr < radius_sqr && (fill || i == 0 || j == 0
+                                                || i_sqr_prev + j_sqr > radius_sqr || i_sqr_next + j_sqr > radius_sqr
+                                                || i_sqr + j_sqr_prev > radius_sqr || i_sqr + j_sqr_next > radius_sqr)) {
+                set_pixel(color, { center.x + i, center.y + j });
+                set_pixel(color, { center.x - i, center.y + j });
+                set_pixel(color, { center.x + i, center.y - j });
+                set_pixel(color, { center.x - i, center.y - j });
+                j_sqr_prev = j_sqr;
+                j_sqr = j_sqr_next;
+                j_sqr_next += 2 * j + 3;
+            } else {
+                break;
             }
         }
+        i_sqr_prev = i_sqr;
+        i_sqr = i_sqr_next;
+        i_sqr_next += 2 * i + 3;
+        j_sqr = 0; 
+        j_sqr_prev = 0; 
+        j_sqr_next = 1;
     }
 }
 

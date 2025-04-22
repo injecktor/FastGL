@@ -24,7 +24,7 @@ public:
 
     void set_pixel(color_t color, point2_t point);
     void set_background(color_t color);
-    void circle(color_t color, unsigned x, unsigned y, unsigned radius, bool fill = true);
+    void circle(color_t color, point2_t center, unsigned radius, bool fill = true);
     void line(line_t line, point2_t start, point2_t end);
     // void border(color_t color, line_t line_type);
     void square(color_t color, unsigned width, unsigned x1, unsigned y1, unsigned length);
