@@ -14,9 +14,24 @@ frame_process_t::frame_process_t(unsigned width, unsigned height) : m_width(widt
 
 void frame_process_t::set_pixel(color_t color, point2_t point) {
     if (point.x >= m_width || point.y >= m_height) return;
-    m_frame_buffer[point.y * m_width + point.x] = color;
-    m_background_bit_mask[(point.y * m_width + point.x) / 8] &= 
-        ~(1 << ((point.y * m_width + point.x) % 8));
+    auto index = point.y * m_width + point.x;
+    if (color.a() == 0xff) {
+        m_frame_buffer[index] = color;
+    } else {
+        color_t new_color;
+        auto prev_color = m_frame_buffer[index];
+        auto prev_alpha = prev_color.get_alpha();
+        auto alpha = color.get_alpha();
+        auto alpha_sum = prev_alpha + alpha;
+        auto prev_alpha_rel = prev_alpha / alpha_sum;
+        auto alpha_rel = alpha / alpha_sum;
+        new_color.set_alpha(1. - (1. - prev_alpha) * (1. - alpha));
+        new_color.r() = prev_alpha_rel * prev_color.r() + alpha_rel * color.r();
+        new_color.g() = prev_alpha_rel * prev_color.g() + alpha_rel * color.g();
+        new_color.b() = prev_alpha_rel * prev_color.b() + alpha_rel * color.b();
+        m_frame_buffer[index] = new_color;
+    }
+    m_background_bit_mask[index / 8] &= ~(1 << (index % 8));
 }
 
 
@@ -114,11 +129,18 @@ void frame_process_t::line(line_t line, point2_t start, point2_t end) {
     }
 }
 
-void frame_process_t::square(line_t line, point2_t point, unsigned length) {
+void frame_process_t::square(line_t line, point2_t point, unsigned length, bool fill) {
     frame_process_t::line(line, { point.x, point.y }, { point.x + length, point.y });
     frame_process_t::line(line, { point.x, point.y }, { point.x, point.y + length });
-    frame_process_t::line(line, { point.x + length, point.y }, { point.x + length, point.y + length });
-    frame_process_t::line(line, { point.x, point.y + length }, { point.x + length, point.y + length });
+    frame_process_t::line(line, { point.x + length, point.y }, { point.x + length, point.y + length + 1 });
+    frame_process_t::line(line, { point.x, point.y + length }, { point.x + length + 1, point.y + length });
+    if (fill) {
+        for (unsigned i = point.x + 1; i < point.x + length; i++) {
+            for (unsigned j = point.y + 1; j < point.y + length; j++) {
+                set_pixel(line.color(), { i, j });
+            }
+        }
+    }
 }
 
 void frame_process_t::rectangle(color_t color, unsigned width, unsigned x1, unsigned y1,

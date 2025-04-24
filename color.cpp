@@ -27,8 +27,7 @@ void color_t::set(unsigned hex) {
     m_b = hex & 0xff;
 }
 void color_t::set(unsigned hex, double alpha) {
-    if (alpha > 1.) alpha = 1.;
-    if (alpha < 0.) alpha = 0.;
+    alpha = math_tools::border(alpha, 0., 1.);
     set(hex & 0xffffff | static_cast<unsigned>(alpha * 0xff) << 24);
 }
 
@@ -50,6 +49,11 @@ uint32_t color_t::get_hex() const {
 
 double color_t::get_alpha() const {
     return static_cast<double>(m_a) / 0xff;
+}
+
+void color_t::set_alpha(double alpha) {
+    alpha = math_tools::border(alpha, 0., 1.);
+    m_a = static_cast<uint8_t>(alpha * 0xff);
 }
 
 color_t color_t::alpha_to_color(color_t color_with_alpha, color_t background) {

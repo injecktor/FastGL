@@ -27,7 +27,7 @@ public:
     void circle(color_t color, point2_t center, unsigned radius, bool fill = true);
     void line(line_t line, point2_t start, point2_t end);
     // void border(color_t color, line_t line_type);
-    void square(line_t line, point2_t point, unsigned length);
+    void square(line_t line, point2_t point, unsigned length, bool fill = true);
     void rectangle(color_t color, unsigned width, unsigned x1, unsigned y1, unsigned x2, unsigned y2);
     void triangle(color_t color, unsigned width, unsigned x1, unsigned y1, unsigned x2, unsigned y2, unsigned x3,
                   unsigned y3);

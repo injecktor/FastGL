@@ -5,6 +5,7 @@
 #include <vector>
 
 #include "logging.h"
+#include "math_tools/math_tools.hpp"
 
 enum class type_t {
     solid,
@@ -48,6 +49,7 @@ public:
     uint8_t& b();
     unsigned get_hex() const;
     double get_alpha() const;
+    void set_alpha(double alpha);
 
     static color_t alpha_to_color(color_t color_with_alpha, color_t background);
 

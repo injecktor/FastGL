@@ -1,0 +1,3 @@
+[submodule "math_tools"]
+	path = math_tools
+	url = git@github.com:injecktor/math_tools.git
