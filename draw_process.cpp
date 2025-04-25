@@ -5,39 +5,42 @@ draw_process_t::draw_process_t(unsigned width, unsigned height) : m_width(width)
     m_resolution(width * height),
     m_background_color(color_t::white) {
     m_frame_buffer.reserve(m_resolution);
-    m_background_bit_mask.reserve((m_resolution - 1) / 8 + 1);
+    m_background_bit_mask.reserve(((m_resolution - 1) >> 3) + 1);
     for (unsigned i = 0; i < m_resolution; ++i) {
         m_background_bit_mask.emplace_back(0xff);
         m_frame_buffer.emplace_back(m_background_color);
     }
 }
 
-void draw_process_t::set_pixel(color_t color, point2_t point) {
+void draw_process_t::set_pixel(color_t color, point2_t point, bool force) {
     if (point.x >= m_width || point.y >= m_height) return;
     auto index = point.y * m_width + point.x;
-    if (color.a() == 0xff) {
+    if (color.a() == 0xff || force) {
         m_frame_buffer[index] = color;
     } else {
         color_t new_color;
         auto prev_color = m_frame_buffer[index];
         auto prev_alpha = prev_color.get_alpha();
         auto alpha = color.get_alpha();
-        auto alpha_sum = prev_alpha + alpha;
-        auto prev_alpha_rel = prev_alpha / alpha_sum;
-        auto alpha_rel = alpha / alpha_sum;
+        auto alpha_reciprocal = 1. - alpha;
         new_color.set_alpha(1. - (1. - prev_alpha) * (1. - alpha));
-        new_color.r() = prev_alpha_rel * prev_color.r() + alpha_rel * color.r();
-        new_color.g() = prev_alpha_rel * prev_color.g() + alpha_rel * color.g();
-        new_color.b() = prev_alpha_rel * prev_color.b() + alpha_rel * color.b();
+        new_color.r() = alpha_reciprocal * prev_color.r() + alpha * color.r();
+        new_color.g() = alpha_reciprocal * prev_color.g() + alpha * color.g();
+        new_color.b() = alpha_reciprocal * prev_color.b() + alpha * color.b();
         m_frame_buffer[index] = new_color;
     }
-    m_background_bit_mask[index / 8] &= ~(1 << (index % 8));
+    m_background_bit_mask[index >> 3] &= ~(1 << (index & 0b111));
 }
 
+void draw_process_t::clear_pixel(color_t color, point2_t point) {
+    auto index = point.y * m_width + point.x;
+    m_frame_buffer[index] = m_background_color;
+    m_background_bit_mask[index >> 3] |= 1 << (index & 0b111);
+}
 
 void draw_process_t::set_background(color_t color) {
     for (unsigned i = 0; i < m_resolution; ++i) {
-        if (m_background_bit_mask[i / 8] & (1 << (i % 8))) {
+        if (m_background_bit_mask[i >> 3] & (1 << (i & 0b111))) {
             m_frame_buffer[i] = color;
         }
     }
@@ -59,14 +62,14 @@ void draw_process_t::circle(color_t color, point2_t center, unsigned radius, boo
                 set_pixel(color, { center.x - i, center.y - j });
                 j_sqr_prev = j_sqr;
                 j_sqr = j_sqr_next;
-                j_sqr_next += 2 * j + 3;
+                j_sqr_next += (j << 1) + 3;
             } else {
                 break;
             }
         }
         i_sqr_prev = i_sqr;
         i_sqr = i_sqr_next;
-        i_sqr_next += 2 * i + 3;
+        i_sqr_next += (i << 1) + 3;
         j_sqr = 0; 
         j_sqr_prev = 0; 
         j_sqr_next = 1;
@@ -99,8 +102,9 @@ void draw_process_t::line(line_t line, point2_t start, point2_t end) {
     double lower_coord;
     double upper_alpha;
     double lower_alpha;
+    bool extra_iteration = true;
 
-    while (static_cast<unsigned>(x) != last) {
+    do {
         switch (line.antialiasing()) {
             case antialiasing_t::none: {
                 upper_coord = round(y);
@@ -118,26 +122,37 @@ void draw_process_t::line(line_t line, point2_t start, point2_t end) {
             break;
         }
         if (along_x) {
-            set_pixel(color_t(line.color(), line.color().get_alpha() * upper_alpha), { static_cast<unsigned>(x), static_cast<unsigned>(upper_coord) });
-            set_pixel(color_t(line.color(), line.color().get_alpha() * lower_alpha), { static_cast<unsigned>(x), static_cast<unsigned>(lower_coord) });
+            set_pixel(color_t(line.color(), line.color().get_alpha() * upper_alpha), 
+                { static_cast<unsigned>(x), static_cast<unsigned>(upper_coord) });
+            if (upper_coord != lower_coord) {
+                set_pixel(color_t(line.color(), line.color().get_alpha() * lower_alpha), 
+                    { static_cast<unsigned>(x), static_cast<unsigned>(lower_coord) });
+            }
         } else {
-            set_pixel(color_t(line.color(), line.color().get_alpha() * upper_alpha), { static_cast<unsigned>(upper_coord), static_cast<unsigned>(x) });
-            set_pixel(color_t(line.color(), line.color().get_alpha() * lower_alpha), { static_cast<unsigned>(lower_coord), static_cast<unsigned>(x) });
+            set_pixel(color_t(line.color(), line.color().get_alpha() * upper_alpha), 
+                { static_cast<unsigned>(upper_coord), static_cast<unsigned>(x) });
+            if (upper_coord != lower_coord) {
+                set_pixel(color_t(line.color(), line.color().get_alpha() * lower_alpha), 
+                    { static_cast<unsigned>(lower_coord), static_cast<unsigned>(x) });
+            }
         }
         y = y + tangent;
+        if (static_cast<unsigned>(x) == last) {
+            extra_iteration = false;
+        }
         x = positive ? ++x : --x;
-    }
+    } while (extra_iteration);
 }
 
 void draw_process_t::square(line_t line, point2_t point, unsigned length, bool fill) {
-    draw_process_t::line(line, { point.x, point.y }, { point.x + length, point.y });
-    draw_process_t::line(line, { point.x, point.y }, { point.x, point.y + length });
-    draw_process_t::line(line, { point.x + length, point.y }, { point.x + length, point.y + length + 1 });
-    draw_process_t::line(line, { point.x, point.y + length }, { point.x + length + 1, point.y + length });
+    draw_process_t::line(line, { point.x, point.y }, { point.x + length - 1, point.y });
+    draw_process_t::line(line, { point.x, point.y + 1 }, { point.x, point.y + length - 2 });
+    draw_process_t::line(line, { point.x + length - 1, point.y + 1 }, { point.x + length - 1, point.y + length - 2 });
+    draw_process_t::line(line, { point.x, point.y + length - 1 }, { point.x + length - 1, point.y + length  - 1 });
     if (fill) {
-        for (unsigned i = point.x + 1; i < point.x + length; i++) {
-            for (unsigned j = point.y + 1; j < point.y + length; j++) {
-                set_pixel(line.color(), { i, j });
+        for (unsigned i = point.x + 1; i < point.x + length - 1; i++) {
+            for (unsigned j = point.y + 1; j < point.y + length - 1; j++) {
+                set_pixel(line.color(), { i, j } );
             }
         }
     }

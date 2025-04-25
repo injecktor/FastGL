@@ -21,7 +21,8 @@ public:
 
     explicit draw_process_t(unsigned width, unsigned height);
 
-    void set_pixel(color_t color, point2_t point);
+    void set_pixel(color_t color, point2_t point, bool force = false);
+    void clear_pixel(color_t color, point2_t point);
     void set_background(color_t color);
     void circle(color_t color, point2_t center, unsigned radius, bool fill = true);
     void line(line_t line, point2_t start, point2_t end);

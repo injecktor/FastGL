@@ -1,4 +1,4 @@
-#include "cge_ppm.h"
+#include "gl_ppm.h"
 
 #include <cmath>
 
