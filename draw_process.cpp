@@ -1,6 +1,6 @@
-#include "frame_process.h"
+#include "draw_process.h"
 
-frame_process_t::frame_process_t(unsigned width, unsigned height) : m_width(width),
+draw_process_t::draw_process_t(unsigned width, unsigned height) : m_width(width),
     m_height(height),
     m_resolution(width * height),
     m_background_color(color_t::white) {
@@ -12,7 +12,7 @@ frame_process_t::frame_process_t(unsigned width, unsigned height) : m_width(widt
     }
 }
 
-void frame_process_t::set_pixel(color_t color, point2_t point) {
+void draw_process_t::set_pixel(color_t color, point2_t point) {
     if (point.x >= m_width || point.y >= m_height) return;
     auto index = point.y * m_width + point.x;
     if (color.a() == 0xff) {
@@ -35,7 +35,7 @@ void frame_process_t::set_pixel(color_t color, point2_t point) {
 }
 
 
-void frame_process_t::set_background(color_t color) {
+void draw_process_t::set_background(color_t color) {
     for (unsigned i = 0; i < m_resolution; ++i) {
         if (m_background_bit_mask[i / 8] & (1 << (i % 8))) {
             m_frame_buffer[i] = color;
@@ -43,7 +43,7 @@ void frame_process_t::set_background(color_t color) {
     }
 }
 
-void frame_process_t::circle(color_t color, point2_t center, unsigned radius, bool fill) {
+void draw_process_t::circle(color_t color, point2_t center, unsigned radius, bool fill) {
     ASSERT(radius != 0, "Can't draw circle with zero radius");
     unsigned radius_sqr = radius * radius;
     unsigned i_sqr = 0, i_sqr_prev = 0, i_sqr_next = 1;
@@ -73,7 +73,7 @@ void frame_process_t::circle(color_t color, point2_t center, unsigned radius, bo
     }
 }
 
-void frame_process_t::line(line_t line, point2_t start, point2_t end) {
+void draw_process_t::line(line_t line, point2_t start, point2_t end) {
     double x, y, tangent;
     unsigned last;
     bool along_x, positive;
@@ -129,11 +129,11 @@ void frame_process_t::line(line_t line, point2_t start, point2_t end) {
     }
 }
 
-void frame_process_t::square(line_t line, point2_t point, unsigned length, bool fill) {
-    frame_process_t::line(line, { point.x, point.y }, { point.x + length, point.y });
-    frame_process_t::line(line, { point.x, point.y }, { point.x, point.y + length });
-    frame_process_t::line(line, { point.x + length, point.y }, { point.x + length, point.y + length + 1 });
-    frame_process_t::line(line, { point.x, point.y + length }, { point.x + length + 1, point.y + length });
+void draw_process_t::square(line_t line, point2_t point, unsigned length, bool fill) {
+    draw_process_t::line(line, { point.x, point.y }, { point.x + length, point.y });
+    draw_process_t::line(line, { point.x, point.y }, { point.x, point.y + length });
+    draw_process_t::line(line, { point.x + length, point.y }, { point.x + length, point.y + length + 1 });
+    draw_process_t::line(line, { point.x, point.y + length }, { point.x + length + 1, point.y + length });
     if (fill) {
         for (unsigned i = point.x + 1; i < point.x + length; i++) {
             for (unsigned j = point.y + 1; j < point.y + length; j++) {
@@ -143,7 +143,7 @@ void frame_process_t::square(line_t line, point2_t point, unsigned length, bool 
     }
 }
 
-void frame_process_t::rectangle(color_t color, unsigned width, unsigned x1, unsigned y1,
+void draw_process_t::rectangle(color_t color, unsigned width, unsigned x1, unsigned y1,
                                 unsigned x2, unsigned y2) {
     // line(color, width, x1, y1, x2, y1);
     // line(color, width, x1, y1, x1, y2);
@@ -151,7 +151,7 @@ void frame_process_t::rectangle(color_t color, unsigned width, unsigned x1, unsi
     // line(color, width, x1, y2, x2, y2);
 }
 
-void frame_process_t::triangle(const color_t color, const unsigned width, const unsigned x1, const unsigned y1,
+void draw_process_t::triangle(const color_t color, const unsigned width, const unsigned x1, const unsigned y1,
                                const unsigned x2, const unsigned y2, const unsigned x3,
                                const unsigned y3) {
     // line(color, width, x1, y1, x2, y2);
@@ -159,7 +159,7 @@ void frame_process_t::triangle(const color_t color, const unsigned width, const 
     // line(color, width, x1, y1, x3, y3);
 }
 
-void frame_process_t::generate_image(const std::string &file_name, const image_type image_type) const {
+void draw_process_t::generate_image(const std::string &file_name, const image_type image_type) const {
     std::shared_ptr<image_format_t> img_gen;
     std::ofstream file;
     switch (image_type) {
@@ -184,14 +184,14 @@ void frame_process_t::generate_image(const std::string &file_name, const image_t
     file.close();
 }
 
-bool frame_process_t::is_in_circle(const signed x, const signed y, const unsigned radius) {
+bool draw_process_t::is_in_circle(const signed x, const signed y, const unsigned radius) {
     if (pow(x, 2) + pow(y, 2) <= pow(radius, 2)) {
         return true;
     }
     return false;
 }
 
-void frame_process_t::alpha_to_color() {
+void draw_process_t::alpha_to_color() {
     for (unsigned y = 0; y < m_height; y++) {
         for (unsigned x = 0; x < m_width; x++) {
             set_pixel(color_t::alpha_to_color(m_frame_buffer[y * m_width + x], m_background_color), { x, y });

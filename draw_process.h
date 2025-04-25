@@ -4,23 +4,22 @@
 #include <cmath>
 #include <memory>
 
-#include "include_graphic_core.h"
-#include "cge_ppm.h"
-#include "cge_png.h"
 #include "color.h"
 #include "line.h"
+#include "image_formats/gl_png.h"
+#include "image_formats/gl_ppm.h"
 
 #define MAP(value, from_lower_limit, from_upper_limit, to_lower_limit, to_upper_limit) \
     (to_lower_limit + (value - from_lower_limit) * (to_upper_limit - to_lower_limit) / (from_upper_limit - from_lower_limit))
 
-class frame_process_t {
+class draw_process_t {
 public:
     enum class image_type {
         ppm,
         png
     };
 
-    explicit frame_process_t(unsigned width, unsigned height);
+    explicit draw_process_t(unsigned width, unsigned height);
 
     void set_pixel(color_t color, point2_t point);
     void set_background(color_t color);
@@ -46,8 +45,6 @@ private:
     // if 1 it's background otherwise it's not
     std::vector<color_t> m_frame_buffer;
     std::vector<uint8_t> m_background_bit_mask;
-
-    std::shared_ptr<frame_generator_t> frame_gen;
 
     static bool is_in_circle(signed x, signed y, unsigned radius);
     void alpha_to_color();
