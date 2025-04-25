@@ -3,22 +3,33 @@
 
 #include "color.h"
 
+namespace line_fillness {
+    constexpr unsigned solid = 0;
+    constexpr unsigned dotted = 1;
+    constexpr unsigned dashed = 2;
+    constexpr unsigned dotdash = 3;
+};
+
+namespace line_antialiasing {
+    constexpr unsigned none = 0;
+    constexpr unsigned wu = 1;
+}
+
+namespace line_effects {
+    constexpr unsigned none = 0;
+    constexpr unsigned gradient = 1;
+    constexpr unsigned faded = 2;
+}
+
 struct line_params_t {
-    enum fillness_t {
-        solid,
-        dotted,
-        dashed,
-        dotdash,
-    };
-    enum antialiasing_t {
-        none,
-        wu
-    };
+    unsigned fillness;
+    unsigned aa;
+    // effects can be united
+    unsigned effect;
+    color_t extra_color;
 
-    fillness_t fillness;
-    antialiasing_t aa;
-
-    line_params_t() : fillness(fillness_t::solid), aa(antialiasing_t::wu) {};
+    line_params_t() : fillness(line_fillness::solid), aa(line_antialiasing::wu),
+        effect(line_effects::none), extra_color() {};
 };
 
 class line_t {
@@ -29,6 +40,9 @@ public:
     unsigned& thickness();
     line_params_t& params();
 
+    // get color according to effects
+    /// \param ratio Point on the line where 0. - start, 1. - end
+    color_t get_current_color(double ratio);
     uint8_t get_next_mask_bit();
 
     void set_bit_offset_start();

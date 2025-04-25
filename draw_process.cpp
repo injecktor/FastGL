@@ -82,38 +82,49 @@ void draw_process_t::line(line_t line, point2_t start, point2_t end) {
     bool along_x, positive;
     const double dx = static_cast<signed>(end.x) - static_cast<signed>(start.x);
     const double dy = static_cast<signed>(end.y) - static_cast<signed>(start.y);
+    double dl;
+    unsigned length;
     if (abs(dx) > abs(dy)) {
         x = start.x;
         y = start.y;
         last = end.x;
         tangent = dy / dx;
         along_x = true;
-        positive = dx > 0;
+        dl = dx;
     } else {
         x = start.y;
         y = start.x;
         last = end.y;
         tangent = dx / dy;
         along_x = false;
-        positive = dy > 0;
+        dl = dy;
     }
+    positive = dl > 0;
+    dl = abs(dl) + 1;
+    length = static_cast<unsigned>(static_cast<signed>(dl));
+    printf("dl = %f\n", dl);
+    printf("length = %u\n", length);
 
     double upper_coord;
     double lower_coord;
     double upper_alpha;
     double lower_alpha;
-    bool extra_iteration = true;
 
-    do {
-        switch (line.params().aa) {
-            case line_params_t::none: {
+    auto aa = line.params().aa;
+    auto color = line.color();
+    auto alpha = line.color().get_alpha();
+
+    unsigned counter = 0;
+    while (counter <= length) {
+        switch (aa) {
+            case line_antialiasing::none: {
                 upper_coord = round(y);
                 lower_coord = round(y);  
                 upper_alpha = 1.;
                 lower_alpha = 1.;
             }
             break;
-            case line_params_t::wu: {
+            case line_antialiasing::wu: {
                 upper_coord = ceil(y);
                 lower_coord = floor(y);
                 upper_alpha = 1. - (upper_coord - y);
@@ -122,26 +133,24 @@ void draw_process_t::line(line_t line, point2_t start, point2_t end) {
             break;
         }
         if (along_x) {
-            set_pixel(color_t(line.color(), line.color().get_alpha() * upper_alpha), 
+            set_pixel(color_t(line.get_current_color(counter / dl), alpha * upper_alpha), 
                 { static_cast<unsigned>(x), static_cast<unsigned>(upper_coord) });
             if (upper_coord != lower_coord) {
-                set_pixel(color_t(line.color(), line.color().get_alpha() * lower_alpha), 
+                set_pixel(color_t(line.get_current_color(counter / dl), alpha * lower_alpha), 
                     { static_cast<unsigned>(x), static_cast<unsigned>(lower_coord) });
             }
         } else {
-            set_pixel(color_t(line.color(), line.color().get_alpha() * upper_alpha), 
+            set_pixel(color_t(line.get_current_color(counter / dl), alpha * upper_alpha), 
                 { static_cast<unsigned>(upper_coord), static_cast<unsigned>(x) });
             if (upper_coord != lower_coord) {
-                set_pixel(color_t(line.color(), line.color().get_alpha() * lower_alpha), 
+                set_pixel(color_t(line.get_current_color(counter / dl), alpha * lower_alpha), 
                     { static_cast<unsigned>(lower_coord), static_cast<unsigned>(x) });
             }
         }
         y = y + tangent;
-        if (static_cast<unsigned>(x) == last) {
-            extra_iteration = false;
-        }
         x = positive ? ++x : --x;
-    } while (extra_iteration);
+        counter++;
+    };
 }
 
 void draw_process_t::square(line_t line, point2_t point, unsigned length, bool fill) {
