@@ -7,17 +7,6 @@
 #include "logging.h"
 #include "math_tools/math_tools.hpp"
 
-enum class type_t {
-    solid,
-    dotted,
-    dashed,
-    dotdash
-};
-enum class antialiasing_t {
-    none,
-    wu
-};
-
 struct point2_t {
     unsigned x;
     unsigned y;

@@ -105,15 +105,15 @@ void draw_process_t::line(line_t line, point2_t start, point2_t end) {
     bool extra_iteration = true;
 
     do {
-        switch (line.antialiasing()) {
-            case antialiasing_t::none: {
+        switch (line.params().aa) {
+            case line_params_t::none: {
                 upper_coord = round(y);
                 lower_coord = round(y);  
                 upper_alpha = 1.;
                 lower_alpha = 1.;
             }
             break;
-            case antialiasing_t::wu: {
+            case line_params_t::wu: {
                 upper_coord = ceil(y);
                 lower_coord = floor(y);
                 upper_alpha = 1. - (upper_coord - y);

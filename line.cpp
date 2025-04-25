@@ -1,18 +1,18 @@
 #include "line.h"
 
-line_t::line_t(color_t color, unsigned thickness, type_t type, antialiasing_t aa)
-	: m_color(color), m_thickness(thickness), m_aa(aa) {
-    switch (type) {
-        case type_t::solid: {
+line_t::line_t(color_t color, unsigned thickness, line_params_t params)
+	: m_color(color), m_thickness(thickness), m_params(params) {
+    switch (m_params.fillness) {
+        case line_params_t::solid: {
             m_bit_mask = 0b11111111'11111111;
         } break;
-        case type_t::dotted: {
+        case line_params_t::dotted: {
             m_bit_mask = 0b11001100'11001100;
         } break;
-        case type_t::dashed: {
+        case line_params_t::dashed: {
             m_bit_mask = 0b11110000'11110000;
         } break;
-        case type_t::dotdash: {
+        case line_params_t::dotdash: {
             m_bit_mask = 0b11110000'01100000;
         } break;
         default: {
@@ -29,8 +29,8 @@ unsigned& line_t::thickness() {
     return m_thickness;
 }
 
-antialiasing_t& line_t::antialiasing() {
-    return m_aa;
+line_params_t& line_t::params(){
+    return m_params;
 }
 
 uint8_t line_t::get_next_mask_bit() {
