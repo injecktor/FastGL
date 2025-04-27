@@ -106,14 +106,11 @@ void draw_process_t::line(line_t line, point2_t start, point2_t end) {
     dl = abs(dl) + 1;
     length = static_cast<unsigned>(static_cast<signed>(dl));
 
-    double upper_coord;
-    double lower_coord;
-    double upper_alpha;
-    double lower_alpha;
+    double upper_coord, lower_coord, upper_alpha, lower_alpha;
 
     auto aa = line.params().aa;
     auto color = line.color();
-    auto alpha = line.color().get_alpha();
+    auto alpha = color.get_alpha();
 
     unsigned counter = 0;
     while (counter < length) {
@@ -184,15 +181,15 @@ void draw_process_t::triangle(const color_t color, const unsigned width, const u
     // line(color, width, x1, y1, x3, y3);
 }
 
-void draw_process_t::generate_image(const std::string &file_name, const image_type image_type) const {
+void draw_process_t::generate_image(const std::string &file_name, const image_type_t image_type) const {
     std::shared_ptr<image_format_t> img_gen;
     std::ofstream file;
     switch (image_type) {
-        case image_type::ppm: {
+        case image_type_t::ppm: {
             img_gen = std::make_shared<ppm_t>(&file, m_width, m_height);
         }
         break;
-        case image_type::png: {
+        case image_type_t::png: {
             ASSERT(false, "Not implemented");
         }
         break;
@@ -201,8 +198,13 @@ void draw_process_t::generate_image(const std::string &file_name, const image_ty
         }
         break;
     }
-    file.open("images/" + file_name + '.' + img_gen->get_format_extension(), 
-        std::ofstream::out | std::ofstream::binary);
+    size_t dot_pos;
+    if ((dot_pos = file_name.find('.')) == std::string::npos || dot_pos == file_name[file_name.length() - 1]) {
+        file.open("images/" + file_name + '.' + img_gen->get_format_extension(), 
+            std::ofstream::out | std::ofstream::binary);
+    } else {
+        file.open("images/" + file_name, std::ofstream::out | std::ofstream::binary);
+    }
     ASSERT(file.is_open(), "Could not open file");
     img_gen->init();
     img_gen->generate(m_frame_buffer, m_last_color);

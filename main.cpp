@@ -25,7 +25,7 @@ int main() {
 
     frame.render();
 
-    frame.generate_image("image", image_type::ppm);
+    frame.generate_image("image", image_type_t::ppm);
 
     return 0;
 }

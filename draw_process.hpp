@@ -3,13 +3,14 @@
 
 #include <cmath>
 #include <memory>
+#include <string>
 
 #include "color.hpp"
 #include "line.hpp"
 #include "image_formats/gl_png.hpp"
 #include "image_formats/gl_ppm.hpp"
 
-enum class image_type {
+enum class image_type_t {
     ppm = 0,
     png = 1,
 };
@@ -31,7 +32,7 @@ public:
                   unsigned y3);
 
     // file_name without extension
-    void generate_image(const std::string &file_name, image_type image_type) const;
+    void generate_image(const std::string &file_name, image_type_t image_type) const;
 
 private:
     unsigned m_width;

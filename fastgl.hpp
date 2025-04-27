@@ -19,7 +19,7 @@ public:
 
     void render();
     
-    void generate_image(const std::string &file_name, image_type image_type) const;
+    void generate_image(const std::string &file_name, image_type_t image_type) const;
     
 private:
     unsigned m_width;

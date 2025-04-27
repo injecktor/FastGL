@@ -108,6 +108,6 @@ void fastgl_t::render() {
     
 }
 
-void fastgl_t::generate_image(const std::string &file_name, image_type image_type) const {
+void fastgl_t::generate_image(const std::string &file_name, image_type_t image_type) const {
     draw_process.generate_image(file_name, image_type);
 }
