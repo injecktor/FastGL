@@ -11,8 +11,10 @@ add_executable(fastgl main.cpp
         line.hpp
         draw_process.cpp
         draw_process.hpp
-        image_format.hpp
-
+        fastgl.cpp
+        fastgl.hpp
+        
+        image_formats/image_format.hpp
         image_formats/gl_png.cpp
         image_formats/gl_png.hpp
         image_formats/gl_ppm.cpp
