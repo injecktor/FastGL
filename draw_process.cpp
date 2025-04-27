@@ -1,6 +1,7 @@
 #include "draw_process.hpp"
 
-draw_process_t::draw_process_t(unsigned width, unsigned height) : m_width(width),
+draw_process_t::draw_process_t(unsigned width, unsigned height) : 
+    m_width(width),
     m_height(height),
     m_resolution(width * height),
     m_background_color(color_t::white) {
@@ -9,6 +10,7 @@ draw_process_t::draw_process_t(unsigned width, unsigned height) : m_width(width)
     for (unsigned i = 0; i < m_resolution; ++i) {
         m_background_bit_mask.emplace_back(0xff);
         m_frame_buffer.emplace_back(m_background_color);
+        m_last_color.emplace_back(0xff);
     }
 }
 
@@ -17,13 +19,14 @@ void draw_process_t::set_pixel(color_t color, point2_t point, bool force) {
     auto index = point.y * m_width + point.x;
     if (color.a() == 0xff || force) {
         m_frame_buffer[index] = color;
+        m_last_color[index] = color;
     } else {
         color_t new_color;
         auto prev_color = m_frame_buffer[index];
         auto prev_alpha = prev_color.get_alpha();
         auto alpha = color.get_alpha();
         auto alpha_reciprocal = 1. - alpha;
-        new_color.set_alpha(1. - (1. - prev_alpha) * (1. - alpha));
+        new_color.set_alpha(1. - (1. - prev_alpha) * alpha_reciprocal);
         new_color.r() = alpha_reciprocal * prev_color.r() + alpha * color.r();
         new_color.g() = alpha_reciprocal * prev_color.g() + alpha * color.g();
         new_color.b() = alpha_reciprocal * prev_color.b() + alpha * color.b();
@@ -32,7 +35,7 @@ void draw_process_t::set_pixel(color_t color, point2_t point, bool force) {
     m_background_bit_mask[index >> 3] &= ~(1 << (index & 0b111));
 }
 
-void draw_process_t::clear_pixel(color_t color, point2_t point) {
+void draw_process_t::clear_pixel(point2_t point) {
     auto index = point.y * m_width + point.x;
     m_frame_buffer[index] = m_background_color;
     m_background_bit_mask[index >> 3] |= 1 << (index & 0b111);
@@ -102,8 +105,6 @@ void draw_process_t::line(line_t line, point2_t start, point2_t end) {
     positive = dl > 0;
     dl = abs(dl) + 1;
     length = static_cast<unsigned>(static_cast<signed>(dl));
-    printf("dl = %f\n", dl);
-    printf("length = %u\n", length);
 
     double upper_coord;
     double lower_coord;
@@ -115,7 +116,7 @@ void draw_process_t::line(line_t line, point2_t start, point2_t end) {
     auto alpha = line.color().get_alpha();
 
     unsigned counter = 0;
-    while (counter <= length) {
+    while (counter < length) {
         switch (aa) {
             case line_antialiasing::none: {
                 upper_coord = round(y);
@@ -204,7 +205,7 @@ void draw_process_t::generate_image(const std::string &file_name, const image_ty
         std::ofstream::out | std::ofstream::binary);
     ASSERT(file.is_open(), "Could not open file");
     img_gen->init();
-    img_gen->generate(m_frame_buffer, m_background_color);
+    img_gen->generate(m_frame_buffer, m_last_color);
     file.close();
 }
 
