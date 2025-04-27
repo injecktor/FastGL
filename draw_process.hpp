@@ -4,10 +4,10 @@
 #include <cmath>
 #include <memory>
 
-#include "color.h"
-#include "line.h"
-#include "image_formats/gl_png.h"
-#include "image_formats/gl_ppm.h"
+#include "color.hpp"
+#include "line.hpp"
+#include "image_formats/gl_png.hpp"
+#include "image_formats/gl_ppm.hpp"
 
 #define MAP(value, from_lower_limit, from_upper_limit, to_lower_limit, to_upper_limit) \
     (to_lower_limit + (value - from_lower_limit) * (to_upper_limit - to_lower_limit) / (from_upper_limit - from_lower_limit))

@@ -1,4 +1,4 @@
-#include "draw_process.h"
+#include "draw_process.hpp"
 
 draw_process_t::draw_process_t(unsigned width, unsigned height) : m_width(width),
     m_height(height),

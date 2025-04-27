@@ -3,7 +3,7 @@
 
 #include <vector>
 
-#include "color.h"
+#include "color.hpp"
 
 class image_format_t {
 public:

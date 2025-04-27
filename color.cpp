@@ -1,4 +1,4 @@
-#include "color.h"
+#include "color.hpp"
 
 color_t::color_t() {
     set(0xff000000);

@@ -4,7 +4,7 @@
 #include <cstdint>
 #include <vector>
 
-#include "logging.h"
+#include "logging.hpp"
 #include "math_tools/math_tools.hpp"
 
 struct point2_t {

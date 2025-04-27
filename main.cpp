@@ -2,8 +2,8 @@
 #include <fstream>
 #include <cstdint>
 
-#include "logging.h"
-#include "draw_process.h"
+#include "logging.hpp"
+#include "draw_process.hpp"
 
 using namespace std;
 

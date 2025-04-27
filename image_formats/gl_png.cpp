@@ -1,4 +1,4 @@
-#include "gl_png.h"
+#include "gl_png.hpp"
 
 void png_t::init(std::ofstream* file, unsigned int width, unsigned int height) {
     ASSERT(file != nullptr, "Trying to init empty file");

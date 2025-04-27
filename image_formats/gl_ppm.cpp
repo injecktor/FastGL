@@ -1,4 +1,4 @@
-#include "gl_ppm.h"
+#include "gl_ppm.hpp"
 
 #include <cmath>
 

@@ -5,7 +5,7 @@
 #include <fstream>
 #include <cstdint>
 
-#include "logging.h"
+#include "logging.hpp"
 
 class png_t {
 public:

@@ -1,7 +1,7 @@
 #ifndef LINE_H
 #define LINE_H
 
-#include "color.h"
+#include "color.hpp"
 
 namespace line_fillness {
     constexpr unsigned solid = 0;

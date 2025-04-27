@@ -4,8 +4,8 @@
 #include <fstream>
 #include <vector>
 
-#include "color.h"
-#include "image_format.h"
+#include "color.hpp"
+#include "image_format.hpp"
 
 class ppm_t final : public image_format_t {
 public:

@@ -1,4 +1,4 @@
-#include "line.h"
+#include "line.hpp"
 
 line_t::line_t(color_t color, unsigned thickness, line_params_t params)
 	: m_color(color), m_thickness(thickness), m_params(params) {
