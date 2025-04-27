@@ -104,8 +104,6 @@ void fastgl_t::render() {
                 break;
         }
     }
-    
-    
 }
 
 void fastgl_t::generate_image(const std::string &file_name, image_type_t image_type) const {

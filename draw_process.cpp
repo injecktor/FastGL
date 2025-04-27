@@ -6,11 +6,14 @@ draw_process_t::draw_process_t(unsigned width, unsigned height) :
     m_resolution(width * height),
     m_background_color(color_t::white) {
     m_frame_buffer.reserve(m_resolution);
-    m_background_bit_mask.reserve(((m_resolution - 1) >> 3) + 1);
+    m_last_color.reserve(m_resolution);
+    m_background_bit_mask.resize(((m_resolution - 1) >> 3) + 1);
     for (unsigned i = 0; i < m_resolution; ++i) {
-        m_background_bit_mask.emplace_back(0xff);
+        if (i < m_background_bit_mask.size()) {
+            m_background_bit_mask[i] = 0xff;
+        }
         m_frame_buffer.emplace_back(m_background_color);
-        m_last_color.emplace_back(0xff);
+        m_last_color.emplace_back(m_background_color);
     }
 }
 
@@ -36,6 +39,7 @@ void draw_process_t::set_pixel(color_t color, point2_t point, bool force) {
 }
 
 void draw_process_t::clear_pixel(point2_t point) {
+    if (point.x >= m_width || point.y >= m_height) return;
     auto index = point.y * m_width + point.x;
     m_frame_buffer[index] = m_background_color;
     m_background_bit_mask[index >> 3] |= 1 << (index & 0b111);
@@ -46,6 +50,17 @@ void draw_process_t::set_background(color_t color) {
         if (m_background_bit_mask[i >> 3] & (1 << (i & 0b111))) {
             m_frame_buffer[i] = color;
         }
+    }
+}
+
+void draw_process_t::clear() {
+    auto bit_mask_size = m_background_bit_mask.size();
+    for (unsigned i = 0; i < m_resolution; ++i) {
+        if (i < bit_mask_size) {
+            m_background_bit_mask[i] = 0xff;
+        }
+        m_frame_buffer[i] = m_background_color;
+        m_last_color[i] = m_background_color;
     }
 }
 

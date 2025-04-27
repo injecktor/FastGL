@@ -15,7 +15,7 @@ int main() {
     param.effect = line_effects::gradient;
     param.extra_color = color_t::blue;
 
-    //frame.line(line_t(color_t(color_t::red), 1, param), {20, 20}, {120, 220});
+    // frame.line(line_t(color_t(color_t::red), 1, param), {20, 20}, {120, 220});
     // frame.line(line_t(color_t(color_t::red), 1, param), {120, 20}, {20, 220});
 
     // frame.circle(color_t::red, {100, 100}, 55);
