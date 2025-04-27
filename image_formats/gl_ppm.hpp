@@ -13,7 +13,7 @@ public:
 
     void init() override;
 
-    unsigned generate(const std::vector<color_t> &image_buffer, const color_t background) override;
+    unsigned generate(const std::vector<color_t> &image_buffer, const std::vector<color_t> &background) override;
 
     std::string get_format_extension() override;
 
