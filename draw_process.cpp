@@ -124,40 +124,43 @@ void draw_process_t::line(line_t line, point2_t start, point2_t end) {
     auto alpha = color.get_alpha();
 
     unsigned counter = 0;
+    double step = 1 / dl, ratio = 0;
     while (counter < length) {
         switch (aa) {
             case line_antialiasing::none: {
                 upper_coord = round(y);
-                lower_coord = round(y);  
+                lower_coord = upper_coord;  
                 upper_alpha = 1.;
                 lower_alpha = 1.;
             }
             break;
             case line_antialiasing::wu: {
                 upper_coord = ceil(y);
-                lower_coord = floor(y);
+                lower_coord = upper_coord - 1;
                 upper_alpha = 1. - (upper_coord - y);
                 lower_alpha = 1. - (y - lower_coord);  
             }
             break;
         }
+        color_t current_color = line.get_current_color(ratio);
         if (along_x) {
-            set_pixel(color_t(line.get_current_color(counter / dl), alpha * upper_alpha), 
+            set_pixel(color_t(current_color, alpha * upper_alpha), 
                 { static_cast<unsigned>(x), static_cast<unsigned>(upper_coord) });
             if (upper_coord != lower_coord) {
-                set_pixel(color_t(line.get_current_color(counter / dl), alpha * lower_alpha), 
+                set_pixel(color_t(current_color, alpha * lower_alpha), 
                     { static_cast<unsigned>(x), static_cast<unsigned>(lower_coord) });
             }
         } else {
-            set_pixel(color_t(line.get_current_color(counter / dl), alpha * upper_alpha), 
+            set_pixel(color_t(current_color, alpha * upper_alpha), 
                 { static_cast<unsigned>(upper_coord), static_cast<unsigned>(x) });
             if (upper_coord != lower_coord) {
-                set_pixel(color_t(line.get_current_color(counter / dl), alpha * lower_alpha), 
+                set_pixel(color_t(current_color, alpha * lower_alpha), 
                     { static_cast<unsigned>(lower_coord), static_cast<unsigned>(x) });
             }
         }
         y = y + tangent;
         x = positive ? ++x : --x;
+        ratio += step;
         counter++;
     };
 }
