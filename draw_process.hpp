@@ -29,8 +29,7 @@ public:
     void line(line_t line, point2_t start, point2_t end);
     // void border(color_t color, line_t line_type);
     void rectangle(line_t line, point2_t point, unsigned width, unsigned height, bool fill = true);
-    void triangle(color_t color, unsigned width, unsigned x1, unsigned y1, unsigned x2, unsigned y2, unsigned x3,
-                  unsigned y3);
+    void triangle(line_t line, point2_t point1, point2_t point2, point2_t point3, bool fill = true);
 
     // file_name without extension
     void generate_image(const std::string &file_name, image_type_t image_type) const;

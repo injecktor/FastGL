@@ -176,12 +176,10 @@ void draw_process_t::rectangle(line_t line, point2_t point, unsigned width, unsi
     }
 }
 
-void draw_process_t::triangle(const color_t color, const unsigned width, const unsigned x1, const unsigned y1,
-                               const unsigned x2, const unsigned y2, const unsigned x3,
-                               const unsigned y3) {
-    // line(color, width, x1, y1, x2, y2);
-    // line(color, width, x3, y3, x2, y2);
-    // line(color, width, x1, y1, x3, y3);
+void draw_process_t::triangle(line_t line, point2_t point1, point2_t point2, point2_t point3, bool fill) {
+    draw_process_t::line(line, point1, point2);
+    draw_process_t::line(line, point1, point3);
+    draw_process_t::line(line, point2, point3);
 }
 
 void draw_process_t::generate_image(const std::string &file_name, image_type_t image_type) const {
