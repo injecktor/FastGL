@@ -1,36 +1,7 @@
 #ifndef LINE_H
 #define LINE_H
 
-#include "color.hpp"
-
-namespace line_fillness {
-    constexpr unsigned solid = 0;
-    constexpr unsigned dotted = 1;
-    constexpr unsigned dashed = 2;
-    constexpr unsigned dotdash = 3;
-};
-
-namespace line_antialiasing {
-    constexpr unsigned none = 0;
-    constexpr unsigned wu = 1;
-}
-
-namespace line_effects {
-    constexpr unsigned none = 0;
-    constexpr unsigned gradient = 1;
-    constexpr unsigned faded = 2;
-}
-
-struct line_params_t {
-    unsigned fillness;
-    unsigned aa;
-    // effects can be united
-    unsigned effect;
-    color_t extra_color;
-
-    line_params_t() : fillness(line_fillness::solid), aa(line_antialiasing::wu),
-        effect(line_effects::none), extra_color() {};
-};
+#include "params.hpp"
 
 class line_t {
 public:

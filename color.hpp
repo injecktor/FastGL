@@ -7,12 +7,6 @@
 #include "logging.hpp"
 #include "math_tools/math_tools.hpp"
 
-struct point2_t {
-    unsigned x;
-    unsigned y;
-    point2_t(unsigned _x = 0, unsigned _y = 0) : x(_x), y(_y){};
-};
-
 class color_t {
 public:
     enum : uint32_t {
