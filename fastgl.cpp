@@ -17,6 +17,10 @@ void fastgl_t::set_pixel(color_t color, point2_t point, bool force) {
     actions.emplace_back(params);
 }
 
+color_t fastgl_t::get_pixel(point2_t point) {
+    return draw_process.get_pixel(point);
+}
+
 void fastgl_t::clear_pixel(point2_t point) {
     action_params_t params;
     params.action = action_t::act_clear_pixel;
@@ -51,19 +55,19 @@ void fastgl_t::line(line_t line, point2_t start, point2_t end) {
 }
 
 void fastgl_t::square(line_t line, point2_t point, unsigned length, bool fill) {
+    rectangle(line, point, length, length, fill);
+}
+
+void fastgl_t::rectangle(line_t line, point2_t point, unsigned width, unsigned height, bool fill) {
     action_params_t params;
-    params.action = action_t::act_square;
+    params.action = action_t::act_rectangle;
     params.lines.emplace_back(line);
     params.points.emplace_back(point);
-    params.unsigneds.emplace_back(length);
+    params.unsigneds.emplace_back(width);
+    params.unsigneds.emplace_back(height);
     params.bools.emplace_back(fill);
     actions.emplace_back(params);
 }
-
-// void fastgl_t::rectangle(color_t color, unsigned width, unsigned x1, unsigned y1,
-//                                 unsigned x2, unsigned y2) {
-    
-// }
 
 // void fastgl_t::triangle(const color_t color, const unsigned width, const unsigned x1, const unsigned y1,
 //                                const unsigned x2, const unsigned y2, const unsigned x3,
@@ -90,12 +94,9 @@ void fastgl_t::render() {
             case action_t::act_line:
                 draw_process.line(act.lines[0], act.points[0], act.points[1]);
                 break;
-            case action_t::act_square:
-                draw_process.square(act.lines[0], act.points[0], act.unsigneds[0], act.bools[0]);
+            case action_t::act_rectangle:
+                draw_process.rectangle(act.lines[0], act.points[0], act.unsigneds[0], act.unsigneds[1], act.bools[0]);
                 break;
-            // case action_t::act_rectangle:
-            //     draw_process.rectangle(act.colors[0], act.points[0], act.bools[0]);
-            //     break;
             // case action_t::act_triangle:
             //     draw_process.set_pixel(act.colors[0], act.points[0], act.bools[0]);
             //     break;

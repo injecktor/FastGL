@@ -21,14 +21,14 @@ public:
     draw_process_t(unsigned width, unsigned height);
 
     void set_pixel(color_t color, point2_t point, bool force = false);
+    color_t get_pixel(point2_t point);
     void clear_pixel(point2_t point);
     void set_background(color_t color);
     void clear();
     void circle(color_t color, point2_t center, unsigned radius, bool fill = true);
     void line(line_t line, point2_t start, point2_t end);
     // void border(color_t color, line_t line_type);
-    void square(line_t line, point2_t point, unsigned length, bool fill = true);
-    void rectangle(color_t color, unsigned width, unsigned x1, unsigned y1, unsigned x2, unsigned y2);
+    void rectangle(line_t line, point2_t point, unsigned width, unsigned height, bool fill = true);
     void triangle(color_t color, unsigned width, unsigned x1, unsigned y1, unsigned x2, unsigned y2, unsigned x3,
                   unsigned y3);
 
@@ -42,9 +42,8 @@ private:
 
     color_t m_background_color;
     std::vector<color_t> m_frame_buffer;
-    std::vector<color_t> m_last_color;
-    // if 1 it's background otherwise it's not
-    std::vector<uint8_t> m_background_bit_mask;
+    // if true it's background otherwise it isn't
+    std::vector<bool> m_background_mask;
 
     static bool is_in_circle(signed x, signed y, unsigned radius);
     void alpha_to_color();

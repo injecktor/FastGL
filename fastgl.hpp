@@ -7,13 +7,14 @@ public:
     fastgl_t(unsigned width, unsigned height);
 
     void set_pixel(color_t color, point2_t point, bool force = false);
+    color_t get_pixel(point2_t point);
     void clear_pixel(point2_t point);
     void set_background(color_t color);
     void circle(color_t color, point2_t center, unsigned radius, bool fill = true);
     void line(line_t line, point2_t start, point2_t end);
     // void border(color_t color, line_t line_type);
     void square(line_t line, point2_t point, unsigned length, bool fill = true);
-    // void rectangle(color_t color, unsigned width, unsigned x1, unsigned y1, unsigned x2, unsigned y2);
+    void rectangle(line_t line, point2_t point, unsigned width, unsigned height, bool fill = true);
     // void triangle(color_t color, unsigned width, unsigned x1, unsigned y1, unsigned x2, unsigned y2, unsigned x3,
                 //   unsigned y3);
 
@@ -35,7 +36,6 @@ private:
         act_set_background,
         act_circle,
         act_line,
-        act_square,
         act_rectangle,
         act_triangle
     };

@@ -6,23 +6,18 @@ draw_process_t::draw_process_t(unsigned width, unsigned height) :
     m_resolution(width * height),
     m_background_color(color_t::white) {
     m_frame_buffer.reserve(m_resolution);
-    m_last_color.reserve(m_resolution);
-    m_background_bit_mask.resize(((m_resolution - 1) >> 3) + 1);
+    m_background_mask.reserve(m_resolution);
     for (unsigned i = 0; i < m_resolution; ++i) {
-        if (i < m_background_bit_mask.size()) {
-            m_background_bit_mask[i] = 0xff;
-        }
+        m_background_mask.emplace_back(true);
         m_frame_buffer.emplace_back(m_background_color);
-        m_last_color.emplace_back(m_background_color);
     }
 }
 
 void draw_process_t::set_pixel(color_t color, point2_t point, bool force) {
     if (point.x >= m_width || point.y >= m_height) return;
     auto index = point.y * m_width + point.x;
-    if (color.a() == 0xff || force) {
+    if (color.a() == 0xff || m_background_mask[index] || force) {
         m_frame_buffer[index] = color;
-        m_last_color[index] = color;
     } else {
         color_t new_color;
         auto prev_color = m_frame_buffer[index];
@@ -35,32 +30,33 @@ void draw_process_t::set_pixel(color_t color, point2_t point, bool force) {
         new_color.b() = alpha_reciprocal * prev_color.b() + alpha * color.b();
         m_frame_buffer[index] = new_color;
     }
-    m_background_bit_mask[index >> 3] &= ~(1 << (index & 0b111));
+    m_background_mask[index] = false;
+}
+
+color_t draw_process_t::get_pixel(point2_t point) {
+    return m_frame_buffer[point.y * m_width + point.x];
 }
 
 void draw_process_t::clear_pixel(point2_t point) {
     if (point.x >= m_width || point.y >= m_height) return;
     auto index = point.y * m_width + point.x;
     m_frame_buffer[index] = m_background_color;
-    m_background_bit_mask[index >> 3] |= 1 << (index & 0b111);
+    m_background_mask[index] = true;
 }
 
 void draw_process_t::set_background(color_t color) {
     for (unsigned i = 0; i < m_resolution; ++i) {
-        if (m_background_bit_mask[i >> 3] & (1 << (i & 0b111))) {
+        if (m_background_mask[i]) {
             m_frame_buffer[i] = color;
         }
     }
 }
 
 void draw_process_t::clear() {
-    auto bit_mask_size = m_background_bit_mask.size();
+    auto bit_mask_size = m_background_mask.size();
     for (unsigned i = 0; i < m_resolution; ++i) {
-        if (i < bit_mask_size) {
-            m_background_bit_mask[i] = 0xff;
-        }
+        m_background_mask[i] = true;
         m_frame_buffer[i] = m_background_color;
-        m_last_color[i] = m_background_color;
     }
 }
 
@@ -166,26 +162,18 @@ void draw_process_t::line(line_t line, point2_t start, point2_t end) {
     };
 }
 
-void draw_process_t::square(line_t line, point2_t point, unsigned length, bool fill) {
-    draw_process_t::line(line, { point.x, point.y }, { point.x + length - 1, point.y });
-    draw_process_t::line(line, { point.x, point.y + 1 }, { point.x, point.y + length - 2 });
-    draw_process_t::line(line, { point.x + length - 1, point.y + 1 }, { point.x + length - 1, point.y + length - 2 });
-    draw_process_t::line(line, { point.x, point.y + length - 1 }, { point.x + length - 1, point.y + length  - 1 });
+void draw_process_t::rectangle(line_t line, point2_t point, unsigned width, unsigned height, bool fill) {
+    draw_process_t::line(line, { point.x, point.y }, { point.x + width - 1, point.y });
+    draw_process_t::line(line, { point.x, point.y + 1 }, { point.x, point.y + height - 2 });
+    draw_process_t::line(line, { point.x + width - 1, point.y + 1 }, { point.x + width - 1, point.y + height - 2 });
+    draw_process_t::line(line, { point.x, point.y + height - 1 }, { point.x + width - 1, point.y + height  - 1 });
     if (fill) {
-        for (unsigned i = point.x + 1; i < point.x + length - 1; i++) {
-            for (unsigned j = point.y + 1; j < point.y + length - 1; j++) {
+        for (unsigned i = point.x + 1; i < point.x + width - 1; i++) {
+            for (unsigned j = point.y + 1; j < point.y + height - 1; j++) {
                 set_pixel(line.color(), { i, j } );
             }
         }
     }
-}
-
-void draw_process_t::rectangle(color_t color, unsigned width, unsigned x1, unsigned y1,
-                                unsigned x2, unsigned y2) {
-    // line(color, width, x1, y1, x2, y1);
-    // line(color, width, x1, y1, x1, y2);
-    // line(color, width, x2, y1, x2, y2);
-    // line(color, width, x1, y2, x2, y2);
 }
 
 void draw_process_t::triangle(const color_t color, const unsigned width, const unsigned x1, const unsigned y1,
@@ -196,7 +184,7 @@ void draw_process_t::triangle(const color_t color, const unsigned width, const u
     // line(color, width, x1, y1, x3, y3);
 }
 
-void draw_process_t::generate_image(const std::string &file_name, const image_type_t image_type) const {
+void draw_process_t::generate_image(const std::string &file_name, image_type_t image_type) const {
     std::shared_ptr<image_format_t> img_gen;
     std::ofstream file;
     switch (image_type) {
@@ -213,16 +201,10 @@ void draw_process_t::generate_image(const std::string &file_name, const image_ty
         }
         break;
     }
-    size_t dot_pos;
-    if ((dot_pos = file_name.find('.')) == std::string::npos || dot_pos == file_name[file_name.length() - 1]) {
-        file.open("images/" + file_name + '.' + img_gen->get_format_extension(), 
-            std::ofstream::out | std::ofstream::binary);
-    } else {
-        file.open("images/" + file_name, std::ofstream::out | std::ofstream::binary);
-    }
+    file.open("images/" + file_name, std::ofstream::out | std::ofstream::binary);
     ASSERT(file.is_open(), "Could not open file");
     img_gen->init();
-    img_gen->generate(m_frame_buffer, m_last_color);
+    img_gen->generate(m_frame_buffer, m_background_color);
     file.close();
 }
 
