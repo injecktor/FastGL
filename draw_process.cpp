@@ -1,6 +1,6 @@
 #include "draw_process.hpp"
 
-draw_process_t::draw_process_t(unsigned width, unsigned height) : 
+draw_process_t::draw_process_t(signed width, signed height) : 
     m_width(width),
     m_height(height),
     m_resolution(width * height),
@@ -15,6 +15,7 @@ draw_process_t::draw_process_t(unsigned width, unsigned height) :
 
 void draw_process_t::set_pixel(color_t color, point2_t point, bool force) {
     if (point.x >= m_width || point.y >= m_height) return;
+    if (point.x < 0 || point.y < 0) return;
     auto index = point.y * m_width + point.x;
     if (color.a() == 0xff || m_background_mask[index] || force) {
         m_frame_buffer[index] = color;
@@ -65,8 +66,8 @@ void draw_process_t::circle(color_t color, point2_t center, unsigned radius, boo
     unsigned radius_sqr = radius * radius;
     unsigned i_sqr = 0, i_sqr_prev = 0, i_sqr_next = 1;
     unsigned j_sqr = 0, j_sqr_prev = 0, j_sqr_next = 1;
-    for (unsigned i = 0; i <= radius - 1; ++i) {
-        for (unsigned j = 0; j <= radius - 1; ++j) {
+    for (signed i = 0; i <= radius - 1; ++i) {
+        for (signed j = 0; j <= radius - 1; ++j) {
             if (i_sqr + j_sqr < radius_sqr && (fill || i == 0 || j == 0
                                                 || i_sqr_prev + j_sqr > radius_sqr || i_sqr_next + j_sqr > radius_sqr
                                                 || i_sqr + j_sqr_prev > radius_sqr || i_sqr + j_sqr_next > radius_sqr)) {
@@ -94,22 +95,24 @@ void draw_process_t::line(line_t line, point2_t start, point2_t end) {
     double x, y, tangent;
     unsigned last;
     bool along_x, positive;
-    const double dx = static_cast<signed>(end.x) - static_cast<signed>(start.x);
-    const double dy = static_cast<signed>(end.y) - static_cast<signed>(start.y);
+    const double dx = end.x - start.x;
+    const double dy = end.y - start.y;
     double dl;
     unsigned length;
-    if (abs(dx) > abs(dy)) {
+    auto abs_dx = abs(dx);
+    auto abs_dy = abs(dy);
+    if (abs_dx > abs_dy) {
         x = start.x;
         y = start.y;
         last = end.x;
-        tangent = dy / dx;
+        tangent = dy / abs_dx;
         along_x = true;
         dl = dx;
     } else {
         x = start.y;
         y = start.x;
         last = end.y;
-        tangent = dx / dy;
+        tangent = dx / abs_dy;
         along_x = false;
         dl = dy;
     }
@@ -145,17 +148,17 @@ void draw_process_t::line(line_t line, point2_t start, point2_t end) {
         color_t current_color = line.get_current_color(ratio);
         if (along_x) {
             set_pixel(color_t(current_color, alpha * upper_alpha), 
-                { static_cast<unsigned>(x), static_cast<unsigned>(upper_coord) });
+                { static_cast<signed>(x), static_cast<signed>(upper_coord) });
             if (upper_coord != lower_coord) {
                 set_pixel(color_t(current_color, alpha * lower_alpha), 
-                    { static_cast<unsigned>(x), static_cast<unsigned>(lower_coord) });
+                    { static_cast<signed>(x), static_cast<signed>(lower_coord) });
             }
         } else {
             set_pixel(color_t(current_color, alpha * upper_alpha), 
-                { static_cast<unsigned>(upper_coord), static_cast<unsigned>(x) });
+                { static_cast<signed>(upper_coord), static_cast<signed>(x) });
             if (upper_coord != lower_coord) {
                 set_pixel(color_t(current_color, alpha * lower_alpha), 
-                    { static_cast<unsigned>(lower_coord), static_cast<unsigned>(x) });
+                    { static_cast<signed>(lower_coord), static_cast<signed>(x) });
             }
         }
         y = y + tangent;
@@ -165,14 +168,27 @@ void draw_process_t::line(line_t line, point2_t start, point2_t end) {
     };
 }
 
-void draw_process_t::rectangle(line_t line, point2_t point, unsigned width, unsigned height, bool fill) {
-    draw_process_t::line(line, { point.x, point.y }, { point.x + width - 1, point.y });
-    draw_process_t::line(line, { point.x, point.y + 1 }, { point.x, point.y + height - 2 });
-    draw_process_t::line(line, { point.x + width - 1, point.y + height - 2 }, { point.x + width - 1, point.y + 1 });
-    draw_process_t::line(line, { point.x + width - 1, point.y + height  - 1 }, { point.x, point.y + height - 1 });
+void draw_process_t::rectangle(line_t line, point2_t point, unsigned width, unsigned height, bool fill, rect_params_t rect_params) {
+    auto sina = sin(rect_params.rotation);
+    auto cosa = cos(rect_params.rotation);
+    width--;
+    height--;
+    point2_t point2(point.x + cosa * width, point.y + sina * width);
+    point2_t point3(point.x - sina * height, point.y + cosa * height);
+    point2_t point4(point2.x + point3.x - point.x, point2.y + point3.y - point.y);
+    printf("sin cos: %f, %f\n", sina, cosa);
+    printf("width height: %u, %u\n", width, height);
+    printf("point: %u, %u\n", point.x, point.y);
+    printf("point2: %u, %u\n", point2.x, point2.y);
+    printf("point3: %u, %u\n", point3.x, point3.y);
+    printf("point4: %u, %u\n", point4.x, point4.y);
+    draw_process_t::line(line, { point.x, point.y }, { point2.x, point2.y });
+    draw_process_t::line(line, { point.x, point.y }, { point3.x, point3.y });
+    draw_process_t::line(line, { point4.x, point4.y }, { point2.x, point2.y });
+    draw_process_t::line(line, { point4.x, point4.y }, { point3.x, point3.y });
     if (fill) {
-        for (unsigned i = point.x + 1; i < point.x + width - 1; i++) {
-            for (unsigned j = point.y + 1; j < point.y + height - 1; j++) {
+        for (signed i = point.x + 1; i < point.x + width - 1; i++) {
+            for (signed j = point.y + 1; j < point.y + height - 1; j++) {
                 set_pixel(line.color(), { i, j } );
             }
         }
@@ -217,8 +233,8 @@ bool draw_process_t::is_in_circle(const signed x, const signed y, const unsigned
 }
 
 void draw_process_t::alpha_to_color() {
-    for (unsigned y = 0; y < m_height; y++) {
-        for (unsigned x = 0; x < m_width; x++) {
+    for (signed y = 0; y < m_height; y++) {
+        for (signed x = 0; x < m_width; x++) {
             set_pixel(color_t::alpha_to_color(m_frame_buffer[y * m_width + x], m_background_color), { x, y });
         }
     }

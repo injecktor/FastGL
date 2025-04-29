@@ -29,7 +29,6 @@ namespace rect_effects {
     constexpr unsigned none = 0;
     constexpr unsigned gradient = 1;
     constexpr unsigned inner_gradient = 2;
-    constexpr unsigned border_gradient = 4;
 };
 
 namespace rect_antialiasing {

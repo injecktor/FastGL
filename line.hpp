@@ -5,6 +5,7 @@
 
 class line_t {
 public:
+    line_t() {};
     line_t(color_t color, unsigned thickness = 1, line_params_t params = line_params_t());
 
     color_t& color();

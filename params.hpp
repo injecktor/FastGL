@@ -4,9 +4,9 @@
 #include "color.hpp"
 
 struct point2_t {
-    unsigned x;
-    unsigned y;
-    point2_t(unsigned _x = 0, unsigned _y = 0) : x(_x), y(_y){};
+    signed x;
+    signed y;
+    point2_t(signed _x = 0, signed _y = 0) : x(_x), y(_y){};
 };
 
 struct line_params_t {
@@ -35,7 +35,7 @@ struct rect_params_t {
     unsigned effect;
     color_t extra_color;
     color_t inner_extra_color;
-    color_t border_extra_color;
+    double rotation;
 
     rect_params_t() : aa(rect_antialiasing::wu), effect(rect_effects::none) {};
 };
