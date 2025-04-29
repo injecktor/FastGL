@@ -12,7 +12,7 @@ int main() {
 
     line_params_t param;
     param.aa = line_antialiasing::wu;
-    param.effect = effects::gradient;
+    param.effect = line_effects::gradient;
     param.extra_color = color_t::blue;
 
     color_t green(color_t::green, 0.9);

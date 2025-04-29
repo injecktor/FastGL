@@ -1,7 +1,7 @@
 #include "color.hpp"
 
 color_t::color_t() {
-    set(0xff000000);
+    set(0xffffffff);
 }
 
 color_t::color_t(uint8_t a, uint8_t r, uint8_t g, uint8_t b)
