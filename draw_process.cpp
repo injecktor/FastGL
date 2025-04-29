@@ -168,8 +168,8 @@ void draw_process_t::line(line_t line, point2_t start, point2_t end) {
 void draw_process_t::rectangle(line_t line, point2_t point, unsigned width, unsigned height, bool fill) {
     draw_process_t::line(line, { point.x, point.y }, { point.x + width - 1, point.y });
     draw_process_t::line(line, { point.x, point.y + 1 }, { point.x, point.y + height - 2 });
-    draw_process_t::line(line, { point.x + width - 1, point.y + 1 }, { point.x + width - 1, point.y + height - 2 });
-    draw_process_t::line(line, { point.x, point.y + height - 1 }, { point.x + width - 1, point.y + height  - 1 });
+    draw_process_t::line(line, { point.x + width - 1, point.y + height - 2 }, { point.x + width - 1, point.y + 1 });
+    draw_process_t::line(line, { point.x + width - 1, point.y + height  - 1 }, { point.x, point.y + height - 1 });
     if (fill) {
         for (unsigned i = point.x + 1; i < point.x + width - 1; i++) {
             for (unsigned j = point.y + 1; j < point.y + height - 1; j++) {
