@@ -6,18 +6,18 @@ draw_process_t::draw_process_t(signed width, signed height) :
     m_resolution(width * height),
     m_background_color(color_t::white) {
     m_frame_buffer.reserve(m_resolution);
-    m_background_mask.reserve(m_resolution);
+    m_flags.reserve(m_resolution);
     for (unsigned i = 0; i < m_resolution; ++i) {
-        m_background_mask.emplace_back(true);
+        m_flags.emplace_back(1);
         m_frame_buffer.emplace_back(m_background_color);
     }
 }
 
-void draw_process_t::set_pixel(color_t color, point2_t point, bool force) {
+void draw_process_t::set_pixel(color_t color, point2_t point, bool force, bool mark_pixel) {
     if (point.x >= m_width || point.y >= m_height) return;
     if (point.x < 0 || point.y < 0) return;
     auto index = point.y * m_width + point.x;
-    if (color.a() == 0xff || m_background_mask[index] || force) {
+    if (color.a() == 0xff || check_flag(flag_t::background, index) || force) {
         m_frame_buffer[index] = color;
     } else {
         color_t new_color;
@@ -31,7 +31,10 @@ void draw_process_t::set_pixel(color_t color, point2_t point, bool force) {
         new_color.b() = alpha_reciprocal * prev_color.b() + alpha * color.b();
         m_frame_buffer[index] = new_color;
     }
-    m_background_mask[index] = false;
+    set_flag(flag_t::background, index, false);
+    if (mark_pixel) {
+        set_flag(flag_t::current, index, true);
+    }
 }
 
 color_t draw_process_t::get_pixel(point2_t point) {
@@ -42,21 +45,20 @@ void draw_process_t::clear_pixel(point2_t point) {
     if (point.x >= m_width || point.y >= m_height) return;
     auto index = point.y * m_width + point.x;
     m_frame_buffer[index] = m_background_color;
-    m_background_mask[index] = true;
+    set_flag(flag_t::background, index, true);
 }
 
 void draw_process_t::set_background(color_t color) {
     for (unsigned i = 0; i < m_resolution; ++i) {
-        if (m_background_mask[i]) {
+        if (check_flag(flag_t::background, i)) {
             m_frame_buffer[i] = color;
         }
     }
 }
 
 void draw_process_t::clear() {
-    auto bit_mask_size = m_background_mask.size();
     for (unsigned i = 0; i < m_resolution; ++i) {
-        m_background_mask[i] = true;
+        set_flag(flag_t::background, i, true);
         m_frame_buffer[i] = m_background_color;
     }
 }
@@ -91,7 +93,7 @@ void draw_process_t::circle(color_t color, point2_t center, unsigned radius, boo
     }
 }
 
-void draw_process_t::line(line_t line, point2_t start, point2_t end) {
+void draw_process_t::line(line_t line, point2_t start, point2_t end, bool mark_pixel) {
     double x, y, tangent;
     unsigned last;
     bool along_x, positive;
@@ -148,17 +150,17 @@ void draw_process_t::line(line_t line, point2_t start, point2_t end) {
         color_t current_color = line.get_current_color(ratio);
         if (along_x) {
             set_pixel(color_t(current_color, alpha * upper_alpha), 
-                { static_cast<signed>(x), static_cast<signed>(upper_coord) });
+                { static_cast<signed>(x), static_cast<signed>(upper_coord) }, false, mark_pixel);
             if (upper_coord != lower_coord) {
                 set_pixel(color_t(current_color, alpha * lower_alpha), 
-                    { static_cast<signed>(x), static_cast<signed>(lower_coord) });
+                    { static_cast<signed>(x), static_cast<signed>(lower_coord) }, false, mark_pixel);
             }
         } else {
             set_pixel(color_t(current_color, alpha * upper_alpha), 
-                { static_cast<signed>(upper_coord), static_cast<signed>(x) });
+                { static_cast<signed>(upper_coord), static_cast<signed>(x) }, false, mark_pixel);
             if (upper_coord != lower_coord) {
                 set_pixel(color_t(current_color, alpha * lower_alpha), 
-                    { static_cast<signed>(lower_coord), static_cast<signed>(x) });
+                    { static_cast<signed>(lower_coord), static_cast<signed>(x) }, false, mark_pixel);
             }
         }
         y = y + tangent;
@@ -176,12 +178,6 @@ void draw_process_t::rectangle(line_t line, point2_t point, unsigned width, unsi
     point2_t point2(point.x + cosa * width, point.y + sina * width);
     point2_t point3(point.x - sina * height, point.y + cosa * height);
     point2_t point4(point2.x + point3.x - point.x, point2.y + point3.y - point.y);
-    printf("sin cos: %f, %f\n", sina, cosa);
-    printf("width height: %u, %u\n", width, height);
-    printf("point: %u, %u\n", point.x, point.y);
-    printf("point2: %u, %u\n", point2.x, point2.y);
-    printf("point3: %u, %u\n", point3.x, point3.y);
-    printf("point4: %u, %u\n", point4.x, point4.y);
     draw_process_t::line(line, { point.x, point.y }, { point2.x, point2.y });
     draw_process_t::line(line, { point.x, point.y }, { point3.x, point3.y });
     draw_process_t::line(line, { point4.x, point4.y }, { point2.x, point2.y });
@@ -223,6 +219,18 @@ void draw_process_t::generate_image(const std::string &file_name, image_type_t i
     img_gen->init();
     img_gen->generate(m_frame_buffer, m_background_color);
     file.close();
+}
+
+inline bool draw_process_t::check_flag(flag_t flag, unsigned index) {
+    return m_flags[index] & (1 << flag);
+}
+
+inline void draw_process_t::set_flag(flag_t flag, unsigned index, bool value) {
+    if (value) {
+        m_flags[index] |= (1 << flag);
+    } else {
+        m_flags[index] &= ~(1 << flag);
+    }
 }
 
 bool draw_process_t::is_in_circle(const signed x, const signed y, const unsigned radius) {

@@ -20,13 +20,13 @@ public:
     draw_process_t() = delete;
     draw_process_t(signed width, signed height);
 
-    void set_pixel(color_t color, point2_t point, bool force = false);
+    void set_pixel(color_t color, point2_t point, bool force = false, bool mark_pixel = false);
     color_t get_pixel(point2_t point);
     void clear_pixel(point2_t point);
     void set_background(color_t color);
     void clear();
     void circle(color_t color, point2_t center, unsigned radius, bool fill = true);
-    void line(line_t line, point2_t start, point2_t end);
+    void line(line_t line, point2_t start, point2_t end, bool mark_pixel = false);
     // void border(color_t color, line_t line_type);
     void rectangle(line_t line, point2_t point, unsigned width, unsigned height, bool fill = true, rect_params_t rect_params = rect_params_t());
     void triangle(line_t line, point2_t point1, point2_t point2, point2_t point3, bool fill = true);
@@ -41,9 +41,19 @@ private:
 
     color_t m_background_color;
     std::vector<color_t> m_frame_buffer;
-    // if true it's background otherwise it isn't
-    std::vector<bool> m_background_mask;
 
+    enum flag_t {
+        none = -1,
+        background,
+        current
+    };
+
+    // 0 bit = is background
+    // 1 bit = is current figure
+    std::vector<uint8_t> m_flags;
+
+    inline bool check_flag(flag_t flag, unsigned index);
+    inline void set_flag(flag_t flag, unsigned index, bool value);
     static bool is_in_circle(signed x, signed y, unsigned radius);
     void alpha_to_color();
 };
