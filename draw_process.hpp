@@ -54,7 +54,6 @@ private:
 
     inline bool check_flag(flag_t flag, unsigned index);
     inline void set_flag(flag_t flag, unsigned index, bool value);
-    static bool is_in_circle(signed x, signed y, unsigned radius);
     void alpha_to_color();
 };
 

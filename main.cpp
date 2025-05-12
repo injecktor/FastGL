@@ -17,10 +17,10 @@ int main() {
     rect_params_t rect_param;
     rect_param.rotation = .3;
 
-    // scene.line(line_t(color_t(color_t::red), 1, line_param), {100, 100}, {194, 129});
-    // scene.line(line_t(color_t(color_t::red), 1, line_param), {100, 100}, {85, 146});
-    // scene.line(line_t(color_t(color_t::red), 1, line_param), {179, 175}, {194, 129});
-    // scene.line(line_t(color_t(color_t::red), 1, line_param), {179, 175}, {85, 146});
+    scene.line(line_t(color_t(color_t::red), 1), {100, 100}, {194, 129});
+    scene.line(line_t(color_t(color_t::red), 1), {100, 100}, {85, 146});
+    scene.line(line_t(color_t(color_t::red), 1), {179, 175}, {194, 129});
+    scene.line(line_t(color_t(color_t::red), 1), {179, 175}, {85, 146});
 
     // scene.circle(color_t::red, {100, 100}, 55);
     // scene.set_pixel(color_t::black, {100, 100});

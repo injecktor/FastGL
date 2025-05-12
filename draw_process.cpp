@@ -233,13 +233,6 @@ inline void draw_process_t::set_flag(flag_t flag, unsigned index, bool value) {
     }
 }
 
-bool draw_process_t::is_in_circle(const signed x, const signed y, const unsigned radius) {
-    if (pow(x, 2) + pow(y, 2) <= pow(radius, 2)) {
-        return true;
-    }
-    return false;
-}
-
 void draw_process_t::alpha_to_color() {
     for (signed y = 0; y < m_height; y++) {
         for (signed x = 0; x < m_width; x++) {
