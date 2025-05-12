@@ -221,6 +221,13 @@ void draw_process_t::generate_image(const std::string &file_name, image_type_t i
     file.close();
 }
 
+void draw_process_t::render() {
+}
+
+const std::vector<color_t>& draw_process_t::get_frame_buffer() {
+    return m_frame_buffer;
+}
+
 inline bool draw_process_t::check_flag(flag_t flag, unsigned index) {
     return m_flags[index] & (1 << flag);
 }

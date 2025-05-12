@@ -33,6 +33,9 @@ public:
 
     // file_name without extension
     void generate_image(const std::string &file_name, image_type_t image_type) const;
+    void render();
+
+    const std::vector<color_t>& get_frame_buffer();
 
 private:
     signed m_width;
