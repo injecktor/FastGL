@@ -183,28 +183,48 @@ void draw_process_t::rectangle(line_t line, point2_t point, unsigned width, unsi
     auto sina = sin(rect_params.rotation);
     auto cosa = cos(rect_params.rotation);
     if (width == 0 || height == 0) return;
-    width--;
-    height--;
-    point2_t point2(point.x + width, point.y);
-    point2_t point3(point.x, point.y + height);
-    point2_t point4(point.x + width, point.y + height);
+    signed s_width = width - 1;
+    signed s_height = height - 1;
     math_tools::matrix_t<double> rot_mtx(2, 2, {cosa, -sina, sina, cosa});
-    math_tools::matrix_t<signed> points(3, 2, { point2.x, point2.y , point3.x, point3.y, point4.x, point4.y });
+    math_tools::matrix_t<signed> points(3, 2, { s_width, 0, 0, s_height, s_width, s_height });
     math_tools::matrix_t<signed> start_points(3, 2, {point.x, point.y, point.x, point.y, point.x, point.y});
-    points -= start_points;
     points *= rot_mtx;
     points += start_points;
 
     draw_process_t::line(line, { point.x, point.y }, { points[0][0], points[0][1] }, true, true);
-    draw_process_t::line(line, { point.x, point.y }, { points[1][0], points[1][1] }, false, false);
-    draw_process_t::line(line, { points[2][0], points[2][1] }, { points[0][0], points[0][1] }, false, false);
-    draw_process_t::line(line, { points[2][0], points[2][1] }, { points[1][0], points[1][1] }, false, true);
+    draw_process_t::line(line, { point.x, point.y }, { points[1][0], points[1][1] }, true, false);
+    draw_process_t::line(line, { points[2][0], points[2][1] }, { points[0][0], points[0][1] }, true, false);
+    draw_process_t::line(line, { points[2][0], points[2][1] }, { points[1][0], points[1][1] }, true, true);
     if (fill) {
-        for (signed i = point.x + 1; i < point.x + width - 1; i++) {
-            for (signed j = point.y + 1; j < point.y + height - 1; j++) {
-                math_tools::matrix_t<signed> tmp_mtx(1, 2, { i, j });
-                tmp_mtx *= rot_mtx;
-                set_pixel(line.color(), { tmp_mtx[0][0], tmp_mtx[0][1] });
+        signed x_min = point.x, y_min = point.y, x_max = point.x, y_max = point.y;
+        for (size_t i = 0; i < 3; i++) {
+            if (points[i][0] < x_min) {
+                x_min = points[i][0];
+            }
+            if (points[i][0] > x_max) {
+                x_max = points[i][0];
+            }
+            if (points[i][1] < y_min) {
+                y_min = points[i][1];
+            }
+            if (points[i][1] > y_max) {
+                y_max = points[i][1];
+            }
+        }   
+        for (signed i = x_min; i < x_max; i++) {
+            for (signed j = y_min; j < y_max; j++) {
+                if (check_flag(flag_t::current, { i, j })) continue;
+                signed step = j + 1;
+                while (step <= y_max && !check_flag(flag_t::current, { i, step })) step++;
+                if (step > y_max) continue;
+                step = j - 1;
+                while (step >= y_min && !check_flag(flag_t::current, { i, step })) step--;
+                if (step < y_min) continue;
+                step = i + 1;
+                while (step <= x_max && !check_flag(flag_t::current, { step, j })) step++;
+                if (step > x_max) continue;
+                step = i - 1;
+                set_pixel(line.color(), { i, j });
             }
         }
     }

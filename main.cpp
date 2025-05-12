@@ -26,8 +26,8 @@ int main() {
     // scene.set_pixel(color_t::black, {100, 100});
     // scene.square(line_t(color_t(color_t::green, 0.5)), {50, 50}, 100, true);
     // scene.square(line_t(color_t(color_t::red), 1, line_param), {100, 100}, 50, false);
-    scene.rectangle(line_t(color_t(color_t::red), 1, line_param), {100, 100}, 100, 50, false);
-    scene.rectangle(line_t(color_t(color_t::red), 1, line_param), {100, 100}, 100, 50, false, rect_param);
+    // scene.rectangle(line_t(color_t(color_t::red), 1, line_param), {100, 100}, 100, 50, false);
+    scene.rectangle(line_t(color_t(color_t::red), 1, line_param), {100, 100}, 100, 50, true, rect_param);
 
     scene.render();
 
