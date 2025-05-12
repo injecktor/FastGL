@@ -16,6 +16,12 @@ enum class image_type_t {
 };
 
 class draw_process_t {
+    enum flag_t {
+        none = -1,
+        background,
+        current
+    };
+
 public:
     draw_process_t() = delete;
     draw_process_t(signed width, signed height);
@@ -26,7 +32,7 @@ public:
     void set_background(color_t color);
     void clear();
     void circle(color_t color, point2_t center, unsigned radius, bool fill = true);
-    void line(line_t line, point2_t start, point2_t end, bool mark_pixel = false);
+    void line(line_t line, point2_t start, point2_t end, bool mark_pixel = false, bool include_borders = true);
     // void border(color_t color, line_t line_type);
     void rectangle(line_t line, point2_t point, unsigned width, unsigned height, bool fill = true, rect_params_t rect_params = rect_params_t());
     void triangle(line_t line, point2_t point1, point2_t point2, point2_t point3, bool fill = true);
@@ -45,17 +51,12 @@ private:
     color_t m_background_color;
     std::vector<color_t> m_frame_buffer;
 
-    enum flag_t {
-        none = -1,
-        background,
-        current
-    };
-
     // 0 bit = is background
     // 1 bit = is current figure
     std::vector<uint8_t> m_flags;
 
     inline bool check_flag(flag_t flag, unsigned index);
+    inline bool check_flag(flag_t flag, point2_t point);
     inline void set_flag(flag_t flag, unsigned index, bool value);
     void alpha_to_color();
 };

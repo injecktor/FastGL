@@ -93,7 +93,7 @@ void draw_process_t::circle(color_t color, point2_t center, unsigned radius, boo
     }
 }
 
-void draw_process_t::line(line_t line, point2_t start, point2_t end, bool mark_pixel) {
+void draw_process_t::line(line_t line, point2_t start, point2_t end, bool mark_pixel, bool include_borders) {
     double x, y, tangent;
     unsigned last;
     bool along_x, positive;
@@ -122,7 +122,8 @@ void draw_process_t::line(line_t line, point2_t start, point2_t end, bool mark_p
     dl = abs(dl) + 1;
     length = static_cast<unsigned>(static_cast<signed>(dl));
 
-    double upper_coord, lower_coord, upper_alpha, lower_alpha;
+    double upper_alpha, lower_alpha;
+    signed upper_coord, lower_coord;
 
     auto aa = line.params().aa;
     auto color = line.color();
@@ -130,6 +131,13 @@ void draw_process_t::line(line_t line, point2_t start, point2_t end, bool mark_p
 
     unsigned counter = 0;
     double step = 1 / dl, ratio = 0;
+    if (!include_borders) {
+        y = y + tangent;
+        x = positive ? ++x : --x;
+        ratio += step;
+        counter++;
+        length--;
+    }
     while (counter < length) {
         switch (aa) {
             case line_antialiasing::none: {
@@ -148,20 +156,21 @@ void draw_process_t::line(line_t line, point2_t start, point2_t end, bool mark_p
             break;
         }
         color_t current_color = line.get_current_color(ratio);
+        signed x1, y1, x2, y2;
         if (along_x) {
-            set_pixel(color_t(current_color, alpha * upper_alpha), 
-                { static_cast<signed>(x), static_cast<signed>(upper_coord) }, false, mark_pixel);
-            if (upper_coord != lower_coord) {
-                set_pixel(color_t(current_color, alpha * lower_alpha), 
-                    { static_cast<signed>(x), static_cast<signed>(lower_coord) }, false, mark_pixel);
-            }
+            x1 = static_cast<signed>(x);
+            y1 = upper_coord;
+            x2 = x1;
+            y2 = lower_coord;
         } else {
-            set_pixel(color_t(current_color, alpha * upper_alpha), 
-                { static_cast<signed>(upper_coord), static_cast<signed>(x) }, false, mark_pixel);
-            if (upper_coord != lower_coord) {
-                set_pixel(color_t(current_color, alpha * lower_alpha), 
-                    { static_cast<signed>(lower_coord), static_cast<signed>(x) }, false, mark_pixel);
-            }
+            x1 = upper_coord;
+            y1 = static_cast<signed>(x);
+            x2 = lower_coord;
+            y2 = y1;
+        }
+        set_pixel(color_t(current_color, alpha * upper_alpha), { x1, y1 }, false, mark_pixel);
+        if (upper_coord != lower_coord) {
+            set_pixel(color_t(current_color, alpha * lower_alpha), { x2, y2 }, false, mark_pixel);
         }
         y = y + tangent;
         x = positive ? ++x : --x;
@@ -173,19 +182,29 @@ void draw_process_t::line(line_t line, point2_t start, point2_t end, bool mark_p
 void draw_process_t::rectangle(line_t line, point2_t point, unsigned width, unsigned height, bool fill, rect_params_t rect_params) {
     auto sina = sin(rect_params.rotation);
     auto cosa = cos(rect_params.rotation);
+    if (width == 0 || height == 0) return;
     width--;
     height--;
-    point2_t point2(point.x + cosa * width, point.y + sina * width);
-    point2_t point3(point.x - sina * height, point.y + cosa * height);
-    point2_t point4(point2.x + point3.x - point.x, point2.y + point3.y - point.y);
-    draw_process_t::line(line, { point.x, point.y }, { point2.x, point2.y });
-    draw_process_t::line(line, { point.x, point.y }, { point3.x, point3.y });
-    draw_process_t::line(line, { point4.x, point4.y }, { point2.x, point2.y });
-    draw_process_t::line(line, { point4.x, point4.y }, { point3.x, point3.y });
+    point2_t point2(point.x + width, point.y);
+    point2_t point3(point.x, point.y + height);
+    point2_t point4(point.x + width, point.y + height);
+    math_tools::matrix_t<double> rot_mtx(2, 2, {cosa, -sina, sina, cosa});
+    math_tools::matrix_t<signed> points(3, 2, { point2.x, point2.y , point3.x, point3.y, point4.x, point4.y });
+    math_tools::matrix_t<signed> start_points(3, 2, {point.x, point.y, point.x, point.y, point.x, point.y});
+    points -= start_points;
+    points *= rot_mtx;
+    points += start_points;
+
+    draw_process_t::line(line, { point.x, point.y }, { points[0][0], points[0][1] }, true, true);
+    draw_process_t::line(line, { point.x, point.y }, { points[1][0], points[1][1] }, false, false);
+    draw_process_t::line(line, { points[2][0], points[2][1] }, { points[0][0], points[0][1] }, false, false);
+    draw_process_t::line(line, { points[2][0], points[2][1] }, { points[1][0], points[1][1] }, false, true);
     if (fill) {
         for (signed i = point.x + 1; i < point.x + width - 1; i++) {
             for (signed j = point.y + 1; j < point.y + height - 1; j++) {
-                set_pixel(line.color(), { i, j } );
+                math_tools::matrix_t<signed> tmp_mtx(1, 2, { i, j });
+                tmp_mtx *= rot_mtx;
+                set_pixel(line.color(), { tmp_mtx[0][0], tmp_mtx[0][1] });
             }
         }
     }
@@ -230,6 +249,10 @@ const std::vector<color_t>& draw_process_t::get_frame_buffer() {
 
 inline bool draw_process_t::check_flag(flag_t flag, unsigned index) {
     return m_flags[index] & (1 << flag);
+}
+
+inline bool draw_process_t::check_flag(flag_t flag, point2_t point) {
+    return m_flags[point.y * m_width + point.x] & (1 << flag);
 }
 
 inline void draw_process_t::set_flag(flag_t flag, unsigned index, bool value) {
