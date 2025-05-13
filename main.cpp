@@ -16,6 +16,8 @@ int main() {
 
     rect_params_t rect_param;
     rect_param.rotation = 1;
+    rect_param.use_inner_color = true;
+    rect_param.inner_color = color_t::green;
 
     // scene.line(line_t(color_t(color_t::red), 1), {100, 100}, {194, 129});
     // scene.line(line_t(color_t(color_t::red), 1), {100, 100}, {85, 146});

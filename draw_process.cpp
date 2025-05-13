@@ -223,7 +223,13 @@ void draw_process_t::rectangle(line_t line, point2_t point, unsigned width, unsi
             if (points[i][1] > y_max) {
                 y_max = points[i][1];
             }
-        }   
+        }
+        color_t inner_color;
+        if (rect_params.use_inner_color) {
+            inner_color = rect_params.inner_color;
+        } else {
+            inner_color = line.color();
+        }
         for (signed i = x_min; i < x_max; i++) {
             for (signed j = y_min; j < y_max; j++) {
                 // if (check_flag(flag_t::current, { i, j })) continue;
@@ -237,7 +243,7 @@ void draw_process_t::rectangle(line_t line, point2_t point, unsigned width, unsi
                 while (step <= x_max && !check_flag(flag_t::current, { step, j })) step++;
                 if (step > x_max) continue;
                 step = i - 1;
-                set_pixel(line.color(), { i, j });
+                set_pixel(inner_color, { i, j });
             }
         }
     }

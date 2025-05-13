@@ -34,7 +34,8 @@ struct rect_params_t {
     // effects can be united
     unsigned effect;
     color_t extra_color;
-    color_t inner_extra_color;
+    bool use_inner_color;
+    color_t inner_color;
     double rotation;
 
     rect_params_t() : aa(rect_antialiasing::wu), effect(rect_effects::none) {};
