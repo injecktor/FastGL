@@ -39,7 +39,6 @@ public:
     void clear();
     void circle(color_t color, point2_t center, unsigned radius, bool fill = true);
     void line(line_t line, point2_t start, point2_t end, bool include_borders = true, draw_type_t draw_type = draw_type_t::color);
-    // void border(color_t color, line_t line_type);
     void rectangle(line_t line, point2_t point, unsigned width, unsigned height, bool fill = true, 
         rect_params_t rect_params = rect_params_t());
     void triangle(line_t line, point2_t point1, point2_t point2, point2_t point3, bool fill = true);
@@ -65,6 +64,7 @@ private:
     inline bool check_flag(flag_t flag, unsigned index);
     inline bool check_flag(flag_t flag, point2_t point);
     inline void set_flag(flag_t flag, unsigned index, bool value);
+    inline bool is_in_figure(signed x, signed y, signed x_max, signed y_min, signed y_max);
     void alpha_to_color();
 };
 
