@@ -13,26 +13,28 @@ draw_process_t::draw_process_t(signed width, signed height) :
     }
 }
 
-void draw_process_t::set_pixel(color_t color, point2_t point, bool force, bool mark_pixel) {
+void draw_process_t::set_pixel(color_t color, point2_t point, bool force, draw_type_t draw_type) {
     if (point.x >= m_width || point.y >= m_height) return;
     if (point.x < 0 || point.y < 0) return;
     auto index = point.y * m_width + point.x;
-    if (color.a() == 0xff || check_flag(flag_t::background, index) || force) {
-        m_frame_buffer[index] = color;
-    } else {
-        color_t new_color;
-        auto prev_color = m_frame_buffer[index];
-        auto prev_alpha = prev_color.get_alpha();
-        auto alpha = color.get_alpha();
-        auto alpha_reciprocal = 1. - alpha;
-        new_color.set_alpha(1. - (1. - prev_alpha) * alpha_reciprocal);
-        new_color.r() = alpha_reciprocal * prev_color.r() + alpha * color.r();
-        new_color.g() = alpha_reciprocal * prev_color.g() + alpha * color.g();
-        new_color.b() = alpha_reciprocal * prev_color.b() + alpha * color.b();
-        m_frame_buffer[index] = new_color;
+    if (draw_type & draw_type_t::color) {
+        if (color.a() == 0xff || check_flag(flag_t::background, index) || force) {
+            m_frame_buffer[index] = color;
+        } else {
+            color_t new_color;
+            auto prev_color = m_frame_buffer[index];
+            auto prev_alpha = prev_color.get_alpha();
+            auto alpha = color.get_alpha();
+            auto alpha_reciprocal = 1. - alpha;
+            new_color.set_alpha(1. - (1. - prev_alpha) * alpha_reciprocal);
+            new_color.r() = alpha_reciprocal * prev_color.r() + alpha * color.r();
+            new_color.g() = alpha_reciprocal * prev_color.g() + alpha * color.g();
+            new_color.b() = alpha_reciprocal * prev_color.b() + alpha * color.b();
+            m_frame_buffer[index] = new_color;
+        }
+        set_flag(flag_t::background, index, false);
     }
-    set_flag(flag_t::background, index, false);
-    if (mark_pixel) {
+    if (draw_type & draw_type_t::flag) {
         set_flag(flag_t::current, index, true);
     }
 }
@@ -93,7 +95,7 @@ void draw_process_t::circle(color_t color, point2_t center, unsigned radius, boo
     }
 }
 
-void draw_process_t::line(line_t line, point2_t start, point2_t end, bool mark_pixel, bool include_borders) {
+void draw_process_t::line(line_t line, point2_t start, point2_t end, bool include_borders, draw_type_t line_draw_type) {
     double x, y, tangent;
     unsigned last;
     bool along_x, positive;
@@ -168,9 +170,9 @@ void draw_process_t::line(line_t line, point2_t start, point2_t end, bool mark_p
             x2 = lower_coord;
             y2 = y1;
         }
-        set_pixel(color_t(current_color, alpha * upper_alpha), { x1, y1 }, false, mark_pixel);
+        set_pixel(color_t(current_color, alpha * upper_alpha), { x1, y1 }, false, line_draw_type);
         if (upper_coord != lower_coord) {
-            set_pixel(color_t(current_color, alpha * lower_alpha), { x2, y2 }, false, mark_pixel);
+            set_pixel(color_t(current_color, alpha * lower_alpha), { x2, y2 }, false, line_draw_type);
         }
         y = y + tangent;
         x = positive ? ++x : --x;
@@ -190,12 +192,23 @@ void draw_process_t::rectangle(line_t line, point2_t point, unsigned width, unsi
     math_tools::matrix_t<signed> start_points(3, 2, {point.x, point.y, point.x, point.y, point.x, point.y});
     points *= rot_mtx;
     points += start_points;
+    draw_process_t::line(line, { point.x, point.y }, { points[0][0], points[0][1] }, true, draw_type_t::flag);
+    draw_process_t::line(line, { point.x, point.y }, { points[1][0], points[1][1] }, false, draw_type_t::flag);
+    draw_process_t::line(line, { points[2][0], points[2][1] }, { points[0][0], points[0][1] }, false, draw_type_t::flag);
+    draw_process_t::line(line, { points[2][0], points[2][1] }, { points[1][0], points[1][1] }, true, draw_type_t::flag);
 
-    draw_process_t::line(line, { point.x, point.y }, { points[0][0], points[0][1] }, true, true);
-    draw_process_t::line(line, { point.x, point.y }, { points[1][0], points[1][1] }, true, false);
-    draw_process_t::line(line, { points[2][0], points[2][1] }, { points[0][0], points[0][1] }, true, false);
-    draw_process_t::line(line, { points[2][0], points[2][1] }, { points[1][0], points[1][1] }, true, true);
     if (fill) {
+        // math_tools::matrix_t<signed> inner_points(4, 2, 
+        //     { 1, 1, s_width - 2, 1, 1, s_height - 2, s_width - 2, s_height - 2 });
+        // math_tools::matrix_t<signed> inner_start_points(4, 2, 
+        //     { point.x, point.y, point.x, point.y, point.x, point.y, point.x, point.y });
+        // inner_points *= rot_mtx;
+        // inner_points += inner_start_points;
+        // line_t inner_line(color_t::green, 1);
+        // draw_process_t::line(inner_line, { inner_points[0][0], inner_points[0][1] }, { inner_points[1][0], inner_points[1][1] }, true);
+        // draw_process_t::line(inner_line, { inner_points[0][0], inner_points[0][1] }, { inner_points[2][0], inner_points[2][1] }, false);
+        // draw_process_t::line(inner_line, { inner_points[3][0], inner_points[3][1] }, { inner_points[1][0], inner_points[1][1] }, false);
+        // draw_process_t::line(inner_line, { inner_points[3][0], inner_points[3][1] }, { inner_points[2][0], inner_points[2][1] }, true);
         signed x_min = point.x, y_min = point.y, x_max = point.x, y_max = point.y;
         for (size_t i = 0; i < 3; i++) {
             if (points[i][0] < x_min) {
@@ -213,7 +226,7 @@ void draw_process_t::rectangle(line_t line, point2_t point, unsigned width, unsi
         }   
         for (signed i = x_min; i < x_max; i++) {
             for (signed j = y_min; j < y_max; j++) {
-                if (check_flag(flag_t::current, { i, j })) continue;
+                // if (check_flag(flag_t::current, { i, j })) continue;
                 signed step = j + 1;
                 while (step <= y_max && !check_flag(flag_t::current, { i, step })) step++;
                 if (step > y_max) continue;
@@ -228,6 +241,10 @@ void draw_process_t::rectangle(line_t line, point2_t point, unsigned width, unsi
             }
         }
     }
+    draw_process_t::line(line, { point.x, point.y }, { points[0][0], points[0][1] }, true);
+    draw_process_t::line(line, { point.x, point.y }, { points[1][0], points[1][1] }, false);
+    draw_process_t::line(line, { points[2][0], points[2][1] }, { points[0][0], points[0][1] }, false);
+    draw_process_t::line(line, { points[2][0], points[2][1] }, { points[1][0], points[1][1] }, true);
 }
 
 void draw_process_t::triangle(line_t line, point2_t point1, point2_t point2, point2_t point3, bool fill) {

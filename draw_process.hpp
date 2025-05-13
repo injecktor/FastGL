@@ -22,19 +22,26 @@ class draw_process_t {
         current
     };
 
+    enum draw_type_t {
+        color = 1,
+        flag = 2,
+        color_and_flag = color | flag
+    };
+
 public:
     draw_process_t() = delete;
     draw_process_t(signed width, signed height);
 
-    void set_pixel(color_t color, point2_t point, bool force = false, bool mark_pixel = false);
+    void set_pixel(color_t color, point2_t point, bool force = false, draw_type_t draw_type = draw_type_t::color);
     color_t get_pixel(point2_t point);
     void clear_pixel(point2_t point);
     void set_background(color_t color);
     void clear();
     void circle(color_t color, point2_t center, unsigned radius, bool fill = true);
-    void line(line_t line, point2_t start, point2_t end, bool mark_pixel = false, bool include_borders = true);
+    void line(line_t line, point2_t start, point2_t end, bool include_borders = true, draw_type_t draw_type = draw_type_t::color);
     // void border(color_t color, line_t line_type);
-    void rectangle(line_t line, point2_t point, unsigned width, unsigned height, bool fill = true, rect_params_t rect_params = rect_params_t());
+    void rectangle(line_t line, point2_t point, unsigned width, unsigned height, bool fill = true, 
+        rect_params_t rect_params = rect_params_t());
     void triangle(line_t line, point2_t point1, point2_t point2, point2_t point3, bool fill = true);
 
     // file_name without extension
