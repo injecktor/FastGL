@@ -99,6 +99,10 @@ void fastgl_t::quadrangle(line_t line, point2_t point1, point2_t point2, point2_
     actions.push(params);
 }
 
+void fastgl_t::generate_image(const std::string &file_name, image_type_t image_type) const {
+    draw_process.generate_image(file_name, image_type);
+}
+
 void fastgl_t::render() {
     while (actions.size() != 0) {
         auto&& act = actions.front();
@@ -138,6 +142,6 @@ void fastgl_t::render() {
     }
 }
 
-void fastgl_t::generate_image(const std::string &file_name, image_type_t image_type) const {
-    draw_process.generate_image(file_name, image_type);
+const std::vector<color_t>& fastgl_t::get_frame() {
+    return draw_process.get_frame_buffer();
 }

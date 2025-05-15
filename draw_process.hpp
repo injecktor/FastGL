@@ -55,7 +55,6 @@ public:
     void quadrangle(line_t line, point2_t point1, point2_t point2, point2_t point3, point2_t point4, 
         bool fill = true);
 
-    // file_name without extension
     void generate_image(const std::string &file_name, image_type_t image_type) const;
     void render();
 
