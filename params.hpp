@@ -26,7 +26,8 @@ struct circle_params_t {
     unsigned effect;
     color_t extra_color;
 
-    circle_params_t() : aa(circle_antialiasing::wu), effect(circle_effects::none) {};
+    circle_params_t() : aa(circle_antialiasing::wu), effect(circle_effects::none),
+        extra_color() {};
 };
 
 struct rect_params_t {
@@ -38,7 +39,8 @@ struct rect_params_t {
     color_t inner_color;
     double rotation;
 
-    rect_params_t() : aa(rect_antialiasing::wu), effect(rect_effects::none) {};
+    rect_params_t() : aa(rect_antialiasing::wu), effect(rect_effects::none),
+        extra_color(), use_inner_color(false), inner_color(), rotation(0.) {};
 };
 
 struct tri_params_t {
@@ -50,5 +52,6 @@ struct tri_params_t {
     color_t inner_color;
     double rotation;
 
-    tri_params_t() : aa(tri_antialiasing::wu), effect(tri_effects::none) {};
+    tri_params_t() : aa(tri_antialiasing::wu), effect(tri_effects::none),
+        extra_color(), use_inner_color(false), inner_color(), rotation(0.) {};
 };
