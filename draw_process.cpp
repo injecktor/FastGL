@@ -116,14 +116,14 @@ void draw_process_t::line(line_t line, point2_t start, point2_t end, line_border
     }
     while (counter < length) {
         switch (aa) {
-            case line_antialiasing::none: {
+            case antialiasing::none: {
                 upper_coord = round(y);
                 lower_coord = upper_coord;  
                 upper_alpha = 1.;
                 lower_alpha = 1.;
             }
             break;
-            case line_antialiasing::wu: {
+            case antialiasing::wu: {
                 upper_coord = ceil(y);
                 lower_coord = upper_coord - 1;
                 upper_alpha = 1. - (upper_coord - y);
@@ -155,30 +155,40 @@ void draw_process_t::line(line_t line, point2_t start, point2_t end, line_border
     };
 }
 
-void draw_process_t::circle(color_t color, point2_t center, unsigned radius, bool fill) {
+void draw_process_t::circle(color_t color, point2_t center, unsigned radius, bool fill, circle_params_t circle_params) {
     for (signed i = 0; i <= radius; ++i) {
         for (signed j = 0; j <= radius; ++j) {
             double distance = sqrt(i * i + j * j) - radius;
             double distance_abs = fabs(distance);
-            if (distance_abs < 1.) {
-                set_pixel(color_t(color.get_hex(), color.get_alpha() * (1 - distance_abs)), 
-                    { center.x + i, center.y + j });
-                set_pixel(color_t(color.get_hex(), color.get_alpha() * (1 - distance_abs)), 
-                    { center.x - i, center.y + j });
-                set_pixel(color_t(color.get_hex(), color.get_alpha() * (1 - distance_abs)), 
-                    { center.x + i, center.y - j });
-                set_pixel(color_t(color.get_hex(), color.get_alpha() * (1 - distance_abs)), 
-                    { center.x - i, center.y - j });
-            }
             if (fill && distance < 0) {
-                set_pixel(color_t(color.get_hex(), color.get_alpha()), 
-                    { center.x + i, center.y + j });
-                set_pixel(color_t(color.get_hex(), color.get_alpha()), 
-                    { center.x - i, center.y + j });
-                set_pixel(color_t(color.get_hex(), color.get_alpha()), 
-                    { center.x + i, center.y - j });
-                set_pixel(color_t(color.get_hex(), color.get_alpha()), 
-                    { center.x - i, center.y - j });
+                color_t inner_color;
+                if (circle_params.use_inner_color) {
+                    inner_color = circle_params.inner_color;
+                } else {
+                    inner_color = color_t(color.get_hex(), color.get_alpha());
+                }
+                set_pixel(inner_color, { center.x + i, center.y + j });
+                set_pixel(inner_color, { center.x - i, center.y + j });
+                set_pixel(inner_color, { center.x + i, center.y - j });
+                set_pixel(inner_color, { center.x - i, center.y - j });
+            }
+            if (distance_abs < 1.) {
+                double alpha;
+                switch (circle_params.aa) {
+                    case antialiasing::none: {
+                        alpha = 1;
+                    }
+                    break;
+                    case antialiasing::wu: {
+                        alpha = 1 - distance_abs;
+                    }
+                    break;
+                }
+                color_t border_color = color_t(color.get_hex(), color.get_alpha() * alpha);
+                set_pixel(border_color, { center.x + i, center.y + j });
+                set_pixel(border_color, { center.x - i, center.y + j });
+                set_pixel(border_color, { center.x + i, center.y - j });
+                set_pixel(border_color, { center.x - i, center.y - j });
             }
         }
     }

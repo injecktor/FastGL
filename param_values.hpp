@@ -10,7 +10,7 @@ namespace line_fillness {
     constexpr unsigned dotdash = 3;
 };
 
-namespace line_antialiasing {
+namespace antialiasing {
     constexpr unsigned none = 0;
     constexpr unsigned wu = 1;
 };
@@ -18,11 +18,7 @@ namespace line_antialiasing {
 namespace circle_effects {
     constexpr unsigned none = 0;
     constexpr unsigned gradient = 1;
-};
-
-namespace circle_antialiasing {
-    constexpr unsigned none = 0;
-    constexpr unsigned wu = 1;
+    constexpr unsigned inner_gradient = 2;
 };
 
 namespace rect_effects {
@@ -31,29 +27,14 @@ namespace rect_effects {
     constexpr unsigned inner_gradient = 2;
 };
 
-namespace rect_antialiasing {
-    constexpr unsigned none = 0;
-    constexpr unsigned wu = 1;
-};
-
 namespace tri_effects {
     constexpr unsigned none = 0;
     constexpr unsigned gradient = 1;
     constexpr unsigned inner_gradient = 2;
 };
 
-namespace tri_antialiasing {
-    constexpr unsigned none = 0;
-    constexpr unsigned wu = 1;
-};
-
 namespace quad_effects {
     constexpr unsigned none = 0;
     constexpr unsigned gradient = 1;
     constexpr unsigned inner_gradient = 2;
-};
-
-namespace quad_antialiasing {
-    constexpr unsigned none = 0;
-    constexpr unsigned wu = 1;
 };
