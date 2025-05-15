@@ -51,6 +51,7 @@ void draw_process_t::clear_pixel(point2_t point) {
 }
 
 void draw_process_t::set_background(color_t color) {
+    m_background_color = color;
     for (unsigned i = 0; i < m_resolution; ++i) {
         if (check_flag(flag_t::flag_background, i)) {
             m_frame_buffer[i] = color;

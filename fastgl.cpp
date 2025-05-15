@@ -4,7 +4,6 @@ fastgl_t::fastgl_t(signed width, signed height) :
     m_width(width),
     m_height(height),
     draw_process(m_width, m_height) {
-    actions.reserve(100);
 }
 
 void fastgl_t::set_pixel(color_t color, point2_t point, bool force) {
@@ -13,7 +12,7 @@ void fastgl_t::set_pixel(color_t color, point2_t point, bool force) {
     params.colors[0] = color;
     params.points[0] = point;
     params.bools[0] = force;
-    actions.emplace_back(params);
+    actions.push(params);
 }
 
 color_t fastgl_t::get_pixel(point2_t point) {
@@ -24,14 +23,14 @@ void fastgl_t::clear_pixel(point2_t point) {
     action_params_t params;
     params.action = action_t::act_clear_pixel;
     params.points[0] = point;
-    actions.emplace_back(params);
+    actions.push(params);
 }
 
 void fastgl_t::set_background(color_t color) {
     action_params_t params;
     params.action = action_t::act_set_background;
     params.colors[0] = color;
-    actions.emplace_back(params);
+    actions.push(params);
 }
 
 void fastgl_t::circle(color_t color, point2_t center, unsigned radius, bool fill) {
@@ -41,7 +40,7 @@ void fastgl_t::circle(color_t color, point2_t center, unsigned radius, bool fill
     params.points[0] = center;
     params.unsigneds[0] = radius;
     params.bools[0] = fill;
-    actions.emplace_back(params);
+    actions.push(params);
 }
 
 void fastgl_t::line(line_t line, point2_t start, point2_t end) {
@@ -50,7 +49,7 @@ void fastgl_t::line(line_t line, point2_t start, point2_t end) {
     params.lines = line;
     params.points[0] = start;
     params.points[1] = end;
-    actions.emplace_back(params);
+    actions.push(params);
 }
 
 void fastgl_t::square(line_t line, point2_t point, unsigned length, bool fill) {
@@ -66,7 +65,7 @@ void fastgl_t::rectangle(line_t line, point2_t point, unsigned width, unsigned h
     params.unsigneds[1] = height;
     params.bools[0] = fill;
     params.rect_params = rect_params;
-    actions.emplace_back(params);
+    actions.push(params);
 }
 
 void fastgl_t::triangle(line_t line, point2_t point1, point2_t point2, point2_t point3, bool fill, tri_params_t tri_params) {
@@ -78,12 +77,13 @@ void fastgl_t::triangle(line_t line, point2_t point1, point2_t point2, point2_t 
     params.points[2] = point3;
     params.bools[0] = fill;
     params.tri_params = tri_params;
-    actions.emplace_back(params);
+    actions.push(params);
 }
 
 void fastgl_t::render() {
-    for (size_t i = 0; i < actions.size(); i++) {
-        auto&& act = actions[i];
+    while (actions.size() != 0) {
+        auto&& act = actions.front();
+        actions.pop();
         switch (act.action) {
             case action_t::act_set_pixel:
                 draw_process.set_pixel(act.colors[0], act.points[0], act.bools[0]);

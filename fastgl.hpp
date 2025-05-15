@@ -1,6 +1,7 @@
 #pragma once
 
 #include "draw_process.hpp"
+#include <queue>
 
 class fastgl_t {
 public:
@@ -52,5 +53,5 @@ private:
         action_params_t() : action(act_none) {};
     };
 
-    std::vector<action_params_t> actions;
+    std::queue<action_params_t> actions;
 };
