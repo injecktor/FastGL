@@ -25,3 +25,7 @@ target_include_directories(fastgl PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}
         image_formats
         )
+
+target_link_libraries(fastgl PRIVATE
+        X11
+        )

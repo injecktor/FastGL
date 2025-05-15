@@ -5,25 +5,37 @@
 #include "logging.hpp"
 #include "fastgl.hpp"
 
+#include <X11/Xlib.h>
+
 using namespace std;
 
 int main() {
-    fastgl_t scene(250, 250);
+    Display *d; int s; Window w; XEvent ev;
+    int should_quit = 0;
 
-    line_params_t line_param;
-    line_param.effect = line_effects::gradient;
-    line_param.extra_color = color_t::blue;
+    d = XOpenDisplay(NULL);
+    s = XDefaultScreen(d);
 
-    rect_params_t rect_param;
-    rect_param.rotation = 1;
+    w = XCreateSimpleWindow(d, XRootWindow(d, s), 0, 0,
+                            200, 200, 0,
+                            XBlackPixel(d, s),
+                            XWhitePixel(d, s));
 
-    
-    scene.set_background(color_t::black);
-    scene.quadrangle(line_t(color_t::red), {40, 150}, {100, 100}, {200, 120}, {100, 200}, true);
+    XSelectInput(d, w, ButtonPressMask);
+    XMapWindow(d, w);
 
-    scene.render();
-
-    scene.generate_image("image.ppm", image_type_t::ppm);
+    while(!should_quit)
+    {
+        XNextEvent(d, &ev);
+        switch(ev.type)
+        {
+            case ButtonPress:
+                should_quit = 1;
+                break;
+            default:
+                break;
+        }
+    }
 
     return 0;
 }
