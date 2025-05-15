@@ -20,6 +20,8 @@ public:
         rect_params_t rect_params = rect_params_t());
     void triangle(line_t line, point2_t point1, point2_t point2, point2_t point3, bool fill = true, 
         tri_params_t tri_params = tri_params_t());
+    void quadrangle(line_t line, point2_t point1, point2_t point2, point2_t point3, point2_t point4, 
+        bool fill = true);
 
     void render();
     
@@ -40,12 +42,13 @@ private:
         act_circle,
         act_line,
         act_rectangle,
-        act_triangle
+        act_triangle,
+        act_quadrangle
     };
 
     struct action_params_t {
         action_t action;
-        point2_t points[3];
+        point2_t points[4];
         color_t colors[3];
         line_t lines;
         unsigned unsigneds[3];

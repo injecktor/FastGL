@@ -30,10 +30,10 @@ class draw_process_t {
     };
 
     enum line_border_t {
-        line_none = 0,
-        line_start = 1,
-        line_end = 2,
-        line_start_and_end = line_start | line_end
+        border_none = 0,
+        border_start = 1,
+        border_end = 2,
+        border_start_and_end = border_start | border_end
     };
 
 public:
@@ -46,13 +46,14 @@ public:
     void set_background(color_t color);
     void clear();
     void circle(color_t color, point2_t center, unsigned radius, bool fill = true);
-    void line(line_t line, point2_t start, point2_t end, line_border_t line_border = line_border_t::line_start_and_end, 
+    void line(line_t line, point2_t start, point2_t end, line_border_t line_border = line_border_t::border_start_and_end, 
         draw_type_t draw_type = draw_type_t::draw_color);
     void rectangle(line_t line, point2_t point, unsigned width, unsigned height, bool fill = true, 
         rect_params_t rect_params = rect_params_t());
     void triangle(line_t line, point2_t point1, point2_t point2, point2_t point3, bool fill = true,
         tri_params_t tri_params = tri_params_t());
-    // void quadrangle
+    void quadrangle(line_t line, point2_t point1, point2_t point2, point2_t point3, point2_t point4, 
+        bool fill = true);
 
     // file_name without extension
     void generate_image(const std::string &file_name, image_type_t image_type) const;

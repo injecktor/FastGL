@@ -134,13 +134,13 @@ void draw_process_t::line(line_t line, point2_t start, point2_t end, line_border
 
     unsigned counter = 0;
     double step = 1 / dl, ratio = 0;
-    if (line_border & line_border_t::line_start) {
+    if (line_border & line_border_t::border_start) {
         y = y + tangent;
         x = positive ? ++x : --x;
         ratio += step;
         counter++;
     }
-    if (line_border & line_border_t::line_end) {
+    if (line_border & line_border_t::border_end) {
         length--;
     }
     while (counter < length) {
@@ -198,13 +198,13 @@ void draw_process_t::rectangle(line_t line, point2_t point, unsigned width, unsi
     
     if (fill) {
         draw_process_t::line(line, { point.x, point.y }, { points[0][0], points[0][1] }, 
-            line_border_t::line_start_and_end, draw_type_t::draw_flag);
+            line_border_t::border_start_and_end, draw_type_t::draw_flag);
         draw_process_t::line(line, { point.x, point.y }, { points[1][0], points[1][1] }, 
-            line_border_t::line_none, draw_type_t::draw_flag);
+            line_border_t::border_none, draw_type_t::draw_flag);
         draw_process_t::line(line, { points[2][0], points[2][1] }, { points[0][0], points[0][1] }, 
-            line_border_t::line_none, draw_type_t::draw_flag);
+            line_border_t::border_none, draw_type_t::draw_flag);
         draw_process_t::line(line, { points[2][0], points[2][1] }, { points[1][0], points[1][1] }, 
-            line_border_t::line_start_and_end, draw_type_t::draw_flag);
+            line_border_t::border_start_and_end, draw_type_t::draw_flag);
         std::array<signed, 4> x_y_min_max;
         x_y_min_max = find_x_y_min_max({ { point.x, point.y }, { points[0][0], points[0][1] }, 
             { points[1][0], points[1][1] }, { points[2][0], points[2][1] } });
@@ -225,16 +225,17 @@ void draw_process_t::rectangle(line_t line, point2_t point, unsigned width, unsi
     }
 
     draw_process_t::line(line, { point.x, point.y }, { points[0][0], points[0][1] });
-    draw_process_t::line(line, { point.x, point.y }, { points[1][0], points[1][1] }, line_border_t::line_none);
-    draw_process_t::line(line, { points[2][0], points[2][1] }, { points[0][0], points[0][1] }, line_border_t::line_none);
+    draw_process_t::line(line, { point.x, point.y }, { points[1][0], points[1][1] }, line_border_t::border_none);
+    draw_process_t::line(line, { points[2][0], points[2][1] }, { points[0][0], points[0][1] }, line_border_t::border_none);
     draw_process_t::line(line, { points[2][0], points[2][1] }, { points[1][0], points[1][1] });
 }
 
-void draw_process_t::triangle(line_t line, point2_t point1, point2_t point2, point2_t point3, bool fill, tri_params_t tri_params) {
+void draw_process_t::triangle(line_t line, point2_t point1, point2_t point2, point2_t point3, bool fill, 
+    tri_params_t tri_params) {
     if (fill) {
-        draw_process_t::line(line, point1, point2, line_border_t::line_start_and_end, draw_type_t::draw_flag);
-        draw_process_t::line(line, point1, point3, line_border_t::line_end, draw_type_t::draw_flag);
-        draw_process_t::line(line, point2, point3, line_border_t::line_none, draw_type_t::draw_flag);
+        draw_process_t::line(line, point1, point2, line_border_t::border_start_and_end, draw_type_t::draw_flag);
+        draw_process_t::line(line, point1, point3, line_border_t::border_end, draw_type_t::draw_flag);
+        draw_process_t::line(line, point2, point3, line_border_t::border_none, draw_type_t::draw_flag);
         std::array<signed, 4> x_y_min_max;
         x_y_min_max = find_x_y_min_max({ point1, point2, point3 });
         color_t inner_color;
@@ -253,8 +254,42 @@ void draw_process_t::triangle(line_t line, point2_t point1, point2_t point2, poi
         clear_flag_in_area({ x_y_min_max[0], x_y_min_max[2] }, { x_y_min_max[1], x_y_min_max[3] });
     }
     draw_process_t::line(line, point1, point2);
-    draw_process_t::line(line, point1, point3, line_border_t::line_end);
-    draw_process_t::line(line, point2, point3, line_border_t::line_none);
+    draw_process_t::line(line, point1, point3, line_border_t::border_end);
+    draw_process_t::line(line, point2, point3, line_border_t::border_none);
+}
+
+void draw_process_t::quadrangle(line_t line, point2_t point1, point2_t point2, point2_t point3, point2_t point4, 
+    bool fill) {
+    if (fill) {
+        draw_process_t::line(line, { point1.x, point1.y }, { point2.x, point2.y }, line_border_t::border_start_and_end,
+            draw_type_t::draw_flag);
+        draw_process_t::line(line, { point2.x, point2.y }, { point3.x, point3.y }, line_border_t::border_end, 
+            draw_type_t::draw_flag);
+        draw_process_t::line(line, { point3.x, point3.y }, { point4.x, point4.y }, line_border_t::border_end, 
+            draw_type_t::draw_flag);
+        draw_process_t::line(line, { point1.x, point1.y }, { point4.x, point4.y }, line_border_t::border_none, 
+            draw_type_t::draw_flag);
+        std::array<signed, 4> x_y_min_max;
+        x_y_min_max = find_x_y_min_max({ point1, point2, point3, point4 });
+        color_t inner_color;
+        // if (tri_params.use_inner_color) {
+        //     inner_color = tri_params.inner_color;
+        // } else {
+            inner_color = line.color();
+        // }
+        for (signed i = x_y_min_max[0]; i < x_y_min_max[1]; i++) {
+            for (signed j = x_y_min_max[2]; j < x_y_min_max[3]; j++) {
+                if (is_in_figure(i, j, x_y_min_max[1], x_y_min_max[2], x_y_min_max[3])) {
+                    set_pixel(inner_color, { i, j });
+                }
+            }
+        }
+        clear_flag_in_area({ x_y_min_max[0], x_y_min_max[2] }, { x_y_min_max[1], x_y_min_max[3] });
+    }
+    draw_process_t::line(line, { point1.x, point1.y }, { point2.x, point2.y });
+    draw_process_t::line(line, { point2.x, point2.y }, { point3.x, point3.y }, line_border_t::border_end);
+    draw_process_t::line(line, { point3.x, point3.y }, { point4.x, point4.y }, line_border_t::border_end);
+    draw_process_t::line(line, { point1.x, point1.y }, { point4.x, point4.y }, line_border_t::border_none);
 }
 
 void draw_process_t::generate_image(const std::string &file_name, image_type_t image_type) const {

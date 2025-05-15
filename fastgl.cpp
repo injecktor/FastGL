@@ -86,6 +86,19 @@ void fastgl_t::triangle(line_t line, point2_t point1, point2_t point2, point2_t 
     actions.push(params);
 }
 
+void fastgl_t::quadrangle(line_t line, point2_t point1, point2_t point2, point2_t point3, point2_t point4, 
+        bool fill) {
+    action_params_t params;
+    params.action = action_t::act_quadrangle;
+    params.lines = line;
+    params.points[0] = point1;
+    params.points[1] = point2;
+    params.points[2] = point3;
+    params.points[3] = point4;
+    params.bools[0] = fill;
+    actions.push(params);
+}
+
 void fastgl_t::render() {
     while (actions.size() != 0) {
         auto&& act = actions.front();
@@ -114,6 +127,9 @@ void fastgl_t::render() {
                 break;
             case action_t::act_triangle:
                 draw_process.triangle(act.lines, act.points[0], act.points[1], act.points[2], act.bools[0], act.tri_params);
+                break;
+            case action_t::act_quadrangle:
+                draw_process.quadrangle(act.lines, act.points[0], act.points[1], act.points[2], act.points[3], act.bools[0]);
                 break;
             default:
                 ASSERT(false, "Unknown action");
