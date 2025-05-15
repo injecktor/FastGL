@@ -10,32 +10,14 @@
 using namespace std;
 
 int main() {
-    Display *d; int s; Window w; XEvent ev;
-    int should_quit = 0;
+    quad_params_t quad_params;
+    quad_params.use_inner_color = true;
+    quad_params.inner_color = color_t::green;
 
-    d = XOpenDisplay(NULL);
-    s = XDefaultScreen(d);
-
-    w = XCreateSimpleWindow(d, XRootWindow(d, s), 0, 0,
-                            200, 200, 0,
-                            XBlackPixel(d, s),
-                            XWhitePixel(d, s));
-
-    XSelectInput(d, w, ButtonPressMask);
-    XMapWindow(d, w);
-
-    while(!should_quit)
-    {
-        XNextEvent(d, &ev);
-        switch(ev.type)
-        {
-            case ButtonPress:
-                should_quit = 1;
-                break;
-            default:
-                break;
-        }
-    }
+    fastgl_t scene(250, 250);
+    scene.quadrangle({color_t::red}, {30, 30}, {50, 100}, {200, 70}, {190, 30}, true, quad_params);
+    scene.render();
+    scene.generate_image("image.ppm", image_type_t::ppm);
 
     return 0;
 }

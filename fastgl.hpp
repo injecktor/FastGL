@@ -21,7 +21,7 @@ public:
     void triangle(line_t line, point2_t point1, point2_t point2, point2_t point3, bool fill = true, 
         tri_params_t tri_params = tri_params_t());
     void quadrangle(line_t line, point2_t point1, point2_t point2, point2_t point3, point2_t point4, 
-        bool fill = true);
+        bool fill = true, quad_params_t quad_params = quad_params_t());
 
     void generate_image(const std::string &file_name, image_type_t image_type) const;
     void render();
@@ -55,6 +55,7 @@ private:
         bool bools[3];
         rect_params_t rect_params;
         tri_params_t tri_params;
+        quad_params_t quad_params;
         action_params_t() : action(act_none) {};
     };
 

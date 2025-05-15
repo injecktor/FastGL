@@ -46,3 +46,14 @@ namespace tri_antialiasing {
     constexpr unsigned none = 0;
     constexpr unsigned wu = 1;
 };
+
+namespace quad_effects {
+    constexpr unsigned none = 0;
+    constexpr unsigned gradient = 1;
+    constexpr unsigned inner_gradient = 2;
+};
+
+namespace quad_antialiasing {
+    constexpr unsigned none = 0;
+    constexpr unsigned wu = 1;
+};

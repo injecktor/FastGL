@@ -87,7 +87,7 @@ void fastgl_t::triangle(line_t line, point2_t point1, point2_t point2, point2_t 
 }
 
 void fastgl_t::quadrangle(line_t line, point2_t point1, point2_t point2, point2_t point3, point2_t point4, 
-        bool fill) {
+        bool fill, quad_params_t quad_params) {
     action_params_t params;
     params.action = action_t::act_quadrangle;
     params.lines = line;
@@ -96,6 +96,7 @@ void fastgl_t::quadrangle(line_t line, point2_t point1, point2_t point2, point2_
     params.points[2] = point3;
     params.points[3] = point4;
     params.bools[0] = fill;
+    params.quad_params = quad_params;
     actions.push(params);
 }
 
@@ -127,13 +128,16 @@ void fastgl_t::render() {
                 draw_process.line(act.lines, act.points[0], act.points[1]);
                 break;
             case action_t::act_rectangle:
-                draw_process.rectangle(act.lines, act.points[0], act.unsigneds[0], act.unsigneds[1], act.bools[0], act.rect_params);
+                draw_process.rectangle(act.lines, act.points[0], act.unsigneds[0], act.unsigneds[1], act.bools[0], 
+                    act.rect_params);
                 break;
             case action_t::act_triangle:
-                draw_process.triangle(act.lines, act.points[0], act.points[1], act.points[2], act.bools[0], act.tri_params);
+                draw_process.triangle(act.lines, act.points[0], act.points[1], act.points[2], act.bools[0], 
+                    act.tri_params);
                 break;
             case action_t::act_quadrangle:
-                draw_process.quadrangle(act.lines, act.points[0], act.points[1], act.points[2], act.points[3], act.bools[0]);
+                draw_process.quadrangle(act.lines, act.points[0], act.points[1], act.points[2], act.points[3], act.bools[0],
+                    act.quad_params);
                 break;
             default:
                 ASSERT(false, "Unknown action");

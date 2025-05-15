@@ -55,3 +55,16 @@ struct tri_params_t {
     tri_params_t() : aa(tri_antialiasing::wu), effect(tri_effects::none),
         extra_color(), use_inner_color(false), inner_color(), rotation(0.) {};
 };
+
+struct quad_params_t {
+    unsigned aa;
+    // effects can be united
+    unsigned effect;
+    color_t extra_color;
+    bool use_inner_color;
+    color_t inner_color;
+    double rotation;
+
+    quad_params_t() : aa(quad_antialiasing::wu), effect(quad_effects::none),
+        extra_color(), use_inner_color(false), inner_color(), rotation(0.) {};
+};

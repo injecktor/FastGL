@@ -216,7 +216,7 @@ void draw_process_t::rectangle(line_t line, point2_t point, unsigned width, unsi
         }
         for (signed i = x_y_min_max[0]; i < x_y_min_max[1]; i++) {
             for (signed j = x_y_min_max[2]; j < x_y_min_max[3]; j++) {
-                if (is_in_figure(i, j, x_y_min_max[1], x_y_min_max[2], x_y_min_max[3])) {
+                if (is_in_figure(i, j, x_y_min_max[0], x_y_min_max[1], x_y_min_max[2], x_y_min_max[3])) {
                     set_pixel(inner_color, { i, j });
                 }
             }
@@ -246,7 +246,7 @@ void draw_process_t::triangle(line_t line, point2_t point1, point2_t point2, poi
         }
         for (signed i = x_y_min_max[0]; i < x_y_min_max[1]; i++) {
             for (signed j = x_y_min_max[2]; j < x_y_min_max[3]; j++) {
-                if (is_in_figure(i, j, x_y_min_max[1], x_y_min_max[2], x_y_min_max[3])) {
+                if (is_in_figure(i, j, x_y_min_max[0], x_y_min_max[1], x_y_min_max[2], x_y_min_max[3])) {
                     set_pixel(inner_color, { i, j });
                 }
             }
@@ -259,7 +259,7 @@ void draw_process_t::triangle(line_t line, point2_t point1, point2_t point2, poi
 }
 
 void draw_process_t::quadrangle(line_t line, point2_t point1, point2_t point2, point2_t point3, point2_t point4, 
-    bool fill) {
+    bool fill, quad_params_t quad_params) {
     if (fill) {
         draw_process_t::line(line, { point1.x, point1.y }, { point2.x, point2.y }, line_border_t::border_start_and_end,
             draw_type_t::draw_flag);
@@ -272,14 +272,14 @@ void draw_process_t::quadrangle(line_t line, point2_t point1, point2_t point2, p
         std::array<signed, 4> x_y_min_max;
         x_y_min_max = find_x_y_min_max({ point1, point2, point3, point4 });
         color_t inner_color;
-        // if (tri_params.use_inner_color) {
-        //     inner_color = tri_params.inner_color;
-        // } else {
+        if (quad_params.use_inner_color) {
+            inner_color = quad_params.inner_color;
+        } else {
             inner_color = line.color();
-        // }
-        for (signed i = x_y_min_max[0]; i < x_y_min_max[1]; i++) {
-            for (signed j = x_y_min_max[2]; j < x_y_min_max[3]; j++) {
-                if (is_in_figure(i, j, x_y_min_max[1], x_y_min_max[2], x_y_min_max[3])) {
+        }
+        for (signed i = x_y_min_max[0] + 1; i < x_y_min_max[1]; i++) {
+            for (signed j = x_y_min_max[2] + 1; j < x_y_min_max[3]; j++) {
+                if (is_in_figure(i, j, x_y_min_max[0], x_y_min_max[1], x_y_min_max[2], x_y_min_max[3])) {
                     set_pixel(inner_color, { i, j });
                 }
             }
@@ -343,16 +343,19 @@ inline void draw_process_t::set_flag(flag_t flag, point2_t point, bool value) {
     set_flag(flag, point.y * m_width + point.x, value);
 }
 
-inline bool draw_process_t::is_in_figure(signed x, signed y, signed x_max, signed y_min, signed y_max) {
-    signed step = y + 1;
-    while (step <= y_max && !check_flag(flag_t::flag_current, { x, step })) step++;
-    if (step > y_max) return false;
-    step = y - 1;
-    while (step >= y_min && !check_flag(flag_t::flag_current, { x, step })) step--;
-    if (step < y_min) return false;
+inline bool draw_process_t::is_in_figure(signed x, signed y, signed x_min, signed x_max, signed y_min, signed y_max) {
+    signed step = x - 1;
+    while (step >= x_min && !check_flag(flag_t::flag_current, { x, step })) step--;
+    if (step < x_min) return false;
     step = x + 1;
     while (step <= x_max && !check_flag(flag_t::flag_current, { step, y })) step++;
     if (step > x_max) return false;
+    step = y - 1;
+    while (step >= y_min && !check_flag(flag_t::flag_current, { x, step })) step--;
+    if (step < y_min) return false;
+    step = y + 1;
+    while (step <= y_max && !check_flag(flag_t::flag_current, { x, step })) step++;
+    if (step > y_max) return false;
     return true;
 }
 
