@@ -134,13 +134,13 @@ void draw_process_t::line(line_t line, point2_t start, point2_t end, line_border
 
     unsigned counter = 0;
     double step = 1 / dl, ratio = 0;
-    if (line_border & line_border_t::border_start) {
+    if (!(line_border & line_border_t::border_start)) {
         y = y + tangent;
         x = positive ? ++x : --x;
         ratio += step;
         counter++;
     }
-    if (line_border & line_border_t::border_end) {
+    if (!(line_border & line_border_t::border_end)) {
         length--;
     }
     while (counter < length) {

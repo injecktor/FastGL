@@ -1,5 +1,5 @@
-#ifndef FRAME_PROCESS_H
-#define FRAME_PROCESS_H
+#ifndef DRAW_PROCESS_H
+#define DRAW_PROCESS_H
 
 #include <cmath>
 #include <memory>
@@ -82,4 +82,4 @@ private:
     void alpha_to_color();
 };
 
-#endif //FRAME_PROCESS_H
+#endif //DRAW_PROCESS_H
