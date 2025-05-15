@@ -39,6 +39,15 @@ void fastgl_t::clear() {
     actions.push(params);
 }
 
+void fastgl_t::line(line_t line, point2_t start, point2_t end) {
+    action_params_t params;
+    params.action = action_t::act_line;
+    params.lines = line;
+    params.points[0] = start;
+    params.points[1] = end;
+    actions.push(params);
+}
+
 void fastgl_t::circle(color_t color, point2_t center, unsigned radius, bool fill) {
     action_params_t params;
     params.action = action_t::act_circle;
@@ -46,15 +55,6 @@ void fastgl_t::circle(color_t color, point2_t center, unsigned radius, bool fill
     params.points[0] = center;
     params.unsigneds[0] = radius;
     params.bools[0] = fill;
-    actions.push(params);
-}
-
-void fastgl_t::line(line_t line, point2_t start, point2_t end) {
-    action_params_t params;
-    params.action = action_t::act_line;
-    params.lines = line;
-    params.points[0] = start;
-    params.points[1] = end;
     actions.push(params);
 }
 

@@ -66,35 +66,6 @@ void draw_process_t::clear() {
     }
 }
 
-void draw_process_t::circle(color_t color, point2_t center, unsigned radius, bool fill) {
-    ASSERT(radius != 0, "Can't draw circle with zero radius");
-    unsigned radius_sqr = radius * radius;
-    unsigned i_sqr = 0, i_sqr_prev = 0, i_sqr_next = 1;
-    unsigned j_sqr = 0, j_sqr_prev = 0, j_sqr_next = 1;
-    for (signed i = 0; i <= radius - 1; ++i) {
-        for (signed j = 0; j <= radius - 1; ++j) {
-            if (i_sqr + j_sqr < radius_sqr && (fill || i == 0 || j == 0
-                                                || i_sqr_prev + j_sqr > radius_sqr || i_sqr_next + j_sqr > radius_sqr
-                                                || i_sqr + j_sqr_prev > radius_sqr || i_sqr + j_sqr_next > radius_sqr)) {
-                set_pixel(color, { center.x + i, center.y + j });
-                set_pixel(color, { center.x - i, center.y + j });
-                set_pixel(color, { center.x + i, center.y - j });
-                set_pixel(color, { center.x - i, center.y - j });
-                j_sqr_prev = j_sqr;
-                j_sqr = j_sqr_next;
-                j_sqr_next += (j << 1) + 3;
-            } else {
-                break;
-            }
-        }
-        i_sqr_prev = i_sqr;
-        i_sqr = i_sqr_next;
-        i_sqr_next += (i << 1) + 3;
-        j_sqr = 0; 
-        j_sqr_prev = 0; 
-        j_sqr_next = 1;
-    }
-}
 
 void draw_process_t::line(line_t line, point2_t start, point2_t end, line_border_t line_border, draw_type_t line_draw_type) {
     double x, y, tangent;
@@ -182,6 +153,35 @@ void draw_process_t::line(line_t line, point2_t start, point2_t end, line_border
         ratio += step;
         counter++;
     };
+}
+
+void draw_process_t::circle(color_t color, point2_t center, unsigned radius, bool fill) {
+    for (signed i = 0; i <= radius; ++i) {
+        for (signed j = 0; j <= radius; ++j) {
+            double distance = sqrt(i * i + j * j) - radius;
+            double distance_abs = fabs(distance);
+            if (distance_abs < 1.) {
+                set_pixel(color_t(color.get_hex(), color.get_alpha() * (1 - distance_abs)), 
+                    { center.x + i, center.y + j });
+                set_pixel(color_t(color.get_hex(), color.get_alpha() * (1 - distance_abs)), 
+                    { center.x - i, center.y + j });
+                set_pixel(color_t(color.get_hex(), color.get_alpha() * (1 - distance_abs)), 
+                    { center.x + i, center.y - j });
+                set_pixel(color_t(color.get_hex(), color.get_alpha() * (1 - distance_abs)), 
+                    { center.x - i, center.y - j });
+            }
+            if (fill && distance < 0) {
+                set_pixel(color_t(color.get_hex(), color.get_alpha()), 
+                    { center.x + i, center.y + j });
+                set_pixel(color_t(color.get_hex(), color.get_alpha()), 
+                    { center.x - i, center.y + j });
+                set_pixel(color_t(color.get_hex(), color.get_alpha()), 
+                    { center.x + i, center.y - j });
+                set_pixel(color_t(color.get_hex(), color.get_alpha()), 
+                    { center.x - i, center.y - j });
+            }
+        }
+    }
 }
 
 void draw_process_t::rectangle(line_t line, point2_t point, unsigned width, unsigned height, bool fill, rect_params_t rect_params) {

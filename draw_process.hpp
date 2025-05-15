@@ -45,9 +45,9 @@ public:
     void clear_pixel(point2_t point);
     void set_background(color_t color);
     void clear();
-    void circle(color_t color, point2_t center, unsigned radius, bool fill = true);
     void line(line_t line, point2_t start, point2_t end, line_border_t line_border = line_border_t::border_start_and_end, 
         draw_type_t draw_type = draw_type_t::draw_color);
+    void circle(color_t color, point2_t center, unsigned radius, bool fill = true);
     void rectangle(line_t line, point2_t point, unsigned width, unsigned height, bool fill = true, 
         rect_params_t rect_params = rect_params_t());
     void triangle(line_t line, point2_t point1, point2_t point2, point2_t point3, bool fill = true,

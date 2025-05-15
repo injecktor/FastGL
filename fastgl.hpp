@@ -12,9 +12,8 @@ public:
     void clear_pixel(point2_t point);
     void set_background(color_t color);
     void clear();
-    void circle(color_t color, point2_t center, unsigned radius, bool fill = true);
     void line(line_t line, point2_t start, point2_t end);
-    // void border(color_t color, line_t line_type);
+    void circle(color_t color, point2_t center, unsigned radius, bool fill = true);
     void square(line_t line, point2_t point, unsigned length, bool fill = true);
     void rectangle(line_t line, point2_t point, unsigned width, unsigned height, bool fill = true, 
         rect_params_t rect_params = rect_params_t());
