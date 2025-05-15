@@ -13,7 +13,8 @@ public:
     void set_background(color_t color);
     void clear();
     void line(line_t line, point2_t start, point2_t end);
-    void circle(color_t color, point2_t center, unsigned radius, bool fill = true);
+    void circle(color_t color, point2_t center, unsigned radius, bool fill = true, 
+        circle_params_t circle_params = circle_params_t());
     void square(line_t line, point2_t point, unsigned length, bool fill = true);
     void rectangle(line_t line, point2_t point, unsigned width, unsigned height, bool fill = true, 
         rect_params_t rect_params = rect_params_t());
@@ -52,6 +53,7 @@ private:
         line_t lines;
         unsigned unsigneds[3];
         bool bools[3];
+        circle_params_t circle_params;
         rect_params_t rect_params;
         tri_params_t tri_params;
         quad_params_t quad_params;

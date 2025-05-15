@@ -14,9 +14,13 @@ int main() {
     quad_params.use_inner_color = true;
     quad_params.inner_color = color_t::green;
 
+    circle_params_t circle_params;
+    circle_params.use_inner_color = true;
+    circle_params.inner_color = color_t::green;
+
     fastgl_t scene(250, 250);
     // scene.quadrangle({color_t::red}, {30, 30}, {50, 100}, {200, 70}, {190, 30}, true, quad_params);
-    scene.circle(color_t::red, {100, 100}, 50, true);
+    scene.circle(color_t::red, {100, 100}, 50, true, circle_params);
     scene.render();
     scene.generate_image("image.ppm", image_type_t::ppm);
 
