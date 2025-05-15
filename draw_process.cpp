@@ -168,9 +168,15 @@ void draw_process_t::circle(color_t color, point2_t center, unsigned radius, boo
                     inner_color = color_t(color.get_hex(), color.get_alpha());
                 }
                 set_pixel(inner_color, { center.x + i, center.y + j });
-                set_pixel(inner_color, { center.x - i, center.y + j });
-                set_pixel(inner_color, { center.x + i, center.y - j });
-                set_pixel(inner_color, { center.x - i, center.y - j });
+                if (i != 0) {
+                    set_pixel(inner_color, { center.x - i, center.y + j });
+                }
+                if (j != 0) {
+                    set_pixel(inner_color, { center.x + i, center.y - j });
+                }
+                if (i != 0 && j != 0) {
+                    set_pixel(inner_color, { center.x - i, center.y - j });
+                }
             }
             if (distance_abs < 1.) {
                 double alpha;
@@ -186,9 +192,15 @@ void draw_process_t::circle(color_t color, point2_t center, unsigned radius, boo
                 }
                 color_t border_color = color_t(color.get_hex(), color.get_alpha() * alpha);
                 set_pixel(border_color, { center.x + i, center.y + j });
-                set_pixel(border_color, { center.x - i, center.y + j });
-                set_pixel(border_color, { center.x + i, center.y - j });
-                set_pixel(border_color, { center.x - i, center.y - j });
+                if (i != 0) {
+                    set_pixel(border_color, { center.x - i, center.y + j });
+                }
+                if (j != 0) {
+                    set_pixel(border_color, { center.x + i, center.y - j });
+                }
+                if (i != 0 && j != 0) {
+                    set_pixel(border_color, { center.x - i, center.y - j });
+                }
             }
         }
     }
