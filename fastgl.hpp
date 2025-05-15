@@ -11,6 +11,7 @@ public:
     color_t get_pixel(point2_t point);
     void clear_pixel(point2_t point);
     void set_background(color_t color);
+    void clear();
     void circle(color_t color, point2_t center, unsigned radius, bool fill = true);
     void line(line_t line, point2_t start, point2_t end);
     // void border(color_t color, line_t line_type);
@@ -35,6 +36,7 @@ private:
         act_set_pixel,
         act_clear_pixel,
         act_set_background,
+        act_clear,
         act_circle,
         act_line,
         act_rectangle,

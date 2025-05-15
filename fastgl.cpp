@@ -33,6 +33,12 @@ void fastgl_t::set_background(color_t color) {
     actions.push(params);
 }
 
+void fastgl_t::clear() {
+    action_params_t params;
+    params.action = action_t::act_clear;
+    actions.push(params);
+}
+
 void fastgl_t::circle(color_t color, point2_t center, unsigned radius, bool fill) {
     action_params_t params;
     params.action = action_t::act_circle;
@@ -93,6 +99,9 @@ void fastgl_t::render() {
                 break;
             case action_t::act_set_background:
                 draw_process.set_background(act.colors[0]);
+                break;
+            case action_t::act_clear:
+                draw_process.clear();
                 break;
             case action_t::act_circle:
                 draw_process.circle(act.colors[0], act.points[0], act.unsigneds[0], act.bools[0]);
