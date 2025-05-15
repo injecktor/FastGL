@@ -345,7 +345,7 @@ inline void draw_process_t::set_flag(flag_t flag, point2_t point, bool value) {
 
 inline bool draw_process_t::is_in_figure(signed x, signed y, signed x_min, signed x_max, signed y_min, signed y_max) {
     signed step = x - 1;
-    while (step >= x_min && !check_flag(flag_t::flag_current, { x, step })) step--;
+    while (step >= x_min && !check_flag(flag_t::flag_current, { step, y })) step--;
     if (step < x_min) return false;
     step = x + 1;
     while (step <= x_max && !check_flag(flag_t::flag_current, { step, y })) step++;
