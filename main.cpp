@@ -17,8 +17,8 @@ int main() {
     rect_params_t rect_param;
     rect_param.rotation = 1;
 
-    scene.rectangle({color_t::red}, { 100, 100 }, 100, 80, true, rect_param);
-    // scene.triangle(line_t(color_t::red), {50, 50}, {100, 100}, {30, 80});
+    // scene.rectangle({color_t::red}, { 100, 100 }, 100, 80, true, rect_param);
+    scene.triangle(line_t(color_t::red), {50, 50}, {100, 100}, {30, 80}, true);
 
     scene.render();
 

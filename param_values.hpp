@@ -35,3 +35,14 @@ namespace rect_antialiasing {
     constexpr unsigned none = 0;
     constexpr unsigned wu = 1;
 };
+
+namespace tri_effects {
+    constexpr unsigned none = 0;
+    constexpr unsigned gradient = 1;
+    constexpr unsigned inner_gradient = 2;
+};
+
+namespace tri_antialiasing {
+    constexpr unsigned none = 0;
+    constexpr unsigned wu = 1;
+};

@@ -16,7 +16,8 @@ public:
     void square(line_t line, point2_t point, unsigned length, bool fill = true);
     void rectangle(line_t line, point2_t point, unsigned width, unsigned height, bool fill = true, 
         rect_params_t rect_params = rect_params_t());
-    void triangle(line_t line, point2_t point1, point2_t point2, point2_t point3, bool fill = true);
+    void triangle(line_t line, point2_t point1, point2_t point2, point2_t point3, bool fill = true, 
+        tri_params_t tri_params = tri_params_t());
 
     void render();
     
@@ -47,6 +48,7 @@ private:
         unsigned unsigneds[3];
         bool bools[3];
         rect_params_t rect_params;
+        tri_params_t tri_params;
         action_params_t() : action(act_none) {};
     };
 

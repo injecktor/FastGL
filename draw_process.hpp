@@ -18,31 +18,40 @@ enum class image_type_t {
 
 class draw_process_t {
     enum flag_t {
-        none = -1,
-        background,
-        current
+        flag_none = -1,
+        flag_background,
+        flag_current
     };
 
     enum draw_type_t {
-        color = 1,
-        flag = 2,
-        color_and_flag = color | flag
+        draw_color = 1,
+        draw_flag = 2,
+        draw_color_and_flag = draw_color | draw_flag
+    };
+
+    enum line_border_t {
+        line_none = 0,
+        line_start = 1,
+        line_end = 2,
+        line_start_and_end = line_start | line_end
     };
 
 public:
     draw_process_t() = delete;
     draw_process_t(signed width, signed height);
 
-    void set_pixel(color_t color, point2_t point, bool force = false, draw_type_t draw_type = draw_type_t::color);
+    void set_pixel(color_t color, point2_t point, bool force = false, draw_type_t draw_type = draw_type_t::draw_color);
     color_t get_pixel(point2_t point);
     void clear_pixel(point2_t point);
     void set_background(color_t color);
     void clear();
     void circle(color_t color, point2_t center, unsigned radius, bool fill = true);
-    void line(line_t line, point2_t start, point2_t end, bool include_borders = true, draw_type_t draw_type = draw_type_t::color);
+    void line(line_t line, point2_t start, point2_t end, line_border_t line_border = line_border_t::line_start_and_end, 
+        draw_type_t draw_type = draw_type_t::draw_color);
     void rectangle(line_t line, point2_t point, unsigned width, unsigned height, bool fill = true, 
         rect_params_t rect_params = rect_params_t());
-    void triangle(line_t line, point2_t point1, point2_t point2, point2_t point3, bool fill = true);
+    void triangle(line_t line, point2_t point1, point2_t point2, point2_t point3, bool fill = true,
+        tri_params_t tri_params = tri_params_t());
     // void quadrangle
 
     // file_name without extension
