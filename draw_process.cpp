@@ -221,6 +221,7 @@ void draw_process_t::rectangle(line_t line, point2_t point, unsigned width, unsi
                 }
             }
         }
+        clear_flag_in_area({ x_y_min_max[0], x_y_min_max[2] }, { x_y_min_max[1], x_y_min_max[3] });
     }
 
     draw_process_t::line(line, { point.x, point.y }, { points[0][0], points[0][1] });
@@ -249,6 +250,7 @@ void draw_process_t::triangle(line_t line, point2_t point1, point2_t point2, poi
                 }
             }
         }
+        clear_flag_in_area({ x_y_min_max[0], x_y_min_max[2] }, { x_y_min_max[1], x_y_min_max[3] });
     }
     draw_process_t::line(line, point1, point2);
     draw_process_t::line(line, point1, point3, line_border_t::line_end);
@@ -302,6 +304,10 @@ inline void draw_process_t::set_flag(flag_t flag, unsigned index, bool value) {
     }
 }
 
+inline void draw_process_t::set_flag(flag_t flag, point2_t point, bool value) {
+    set_flag(flag, point.y * m_width + point.x, value);
+}
+
 inline bool draw_process_t::is_in_figure(signed x, signed y, signed x_max, signed y_min, signed y_max) {
     signed step = y + 1;
     while (step <= y_max && !check_flag(flag_t::flag_current, { x, step })) step++;
@@ -335,6 +341,14 @@ inline std::array<signed, 4> draw_process_t::find_x_y_min_max(std::vector<point2
     }
     
     return { x_min, x_max, y_min, y_max };
+}
+
+inline void draw_process_t::clear_flag_in_area(point2_t point1, point2_t point2) {
+    for (signed i = point1.x; i < point2.x; i++) {
+        for (signed j =  point1.y; j < point2.y; j++) {
+            set_flag(flag_t::flag_current, { i, j }, false);
+        }
+    }
 }
 
 void draw_process_t::alpha_to_color() {

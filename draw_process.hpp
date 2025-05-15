@@ -75,8 +75,10 @@ private:
     inline bool check_flag(flag_t flag, unsigned index);
     inline bool check_flag(flag_t flag, point2_t point);
     inline void set_flag(flag_t flag, unsigned index, bool value);
+    inline void set_flag(flag_t flag, point2_t point, bool value);
     inline bool is_in_figure(signed x, signed y, signed x_max, signed y_min, signed y_max);
     inline std::array<signed, 4> find_x_y_min_max(std::vector<point2_t> points);
+    inline void clear_flag_in_area(point2_t point1, point2_t point2);
     void alpha_to_color();
 };
 
