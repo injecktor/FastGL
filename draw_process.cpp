@@ -198,20 +198,10 @@ void draw_process_t::rectangle(line_t line, point2_t point, unsigned width, unsi
         draw_process_t::line(line, { point.x, point.y }, { points[1][0], points[1][1] }, false, draw_type_t::flag);
         draw_process_t::line(line, { points[2][0], points[2][1] }, { points[0][0], points[0][1] }, false, draw_type_t::flag);
         draw_process_t::line(line, { points[2][0], points[2][1] }, { points[1][0], points[1][1] }, true, draw_type_t::flag);
-        signed x_min = point.x, y_min = point.y, x_max = point.x, y_max = point.y;
+        std::array<signed, 4> x_y_min_max;
         for (size_t i = 0; i < 3; i++) {
-            if (points[i][0] < x_min) {
-                x_min = points[i][0];
-            }
-            if (points[i][0] > x_max) {
-                x_max = points[i][0];
-            }
-            if (points[i][1] < y_min) {
-                y_min = points[i][1];
-            }
-            if (points[i][1] > y_max) {
-                y_max = points[i][1];
-            }
+            x_y_min_max = find_x_y_min_max({ { point.x, point.y }, { points[0][0], points[0][1] }, 
+                { points[1][0], points[1][1] }, { points[2][0], points[2][1] } });
         }
         color_t inner_color;
         if (rect_params.use_inner_color) {
@@ -219,10 +209,11 @@ void draw_process_t::rectangle(line_t line, point2_t point, unsigned width, unsi
         } else {
             inner_color = line.color();
         }
-        for (signed i = x_min; i < x_max; i++) {
-            for (signed j = y_min; j < y_max; j++) {
-                is_in_figure();
-                set_pixel(inner_color, { i, j });
+        for (signed i = x_y_min_max[0]; i < x_y_min_max[1]; i++) {
+            for (signed j = x_y_min_max[2]; j < x_y_min_max[3]; j++) {
+                if (is_in_figure(i, j, x_y_min_max[1], x_y_min_max[2], x_y_min_max[3])) {
+                    set_pixel(inner_color, { i, j });
+                }
             }
         }
     }
@@ -287,16 +278,38 @@ inline void draw_process_t::set_flag(flag_t flag, unsigned index, bool value) {
 }
 
 inline bool draw_process_t::is_in_figure(signed x, signed y, signed x_max, signed y_min, signed y_max) {
-    signed step = j + 1;
-    while (step <= y_max && !check_flag(flag_t::current, { i, step })) step++;
+    signed step = y + 1;
+    while (step <= y_max && !check_flag(flag_t::current, { x, step })) step++;
     if (step > y_max) return false;
-    step = j - 1;
-    while (step >= y_min && !check_flag(flag_t::current, { i, step })) step--;
+    step = y - 1;
+    while (step >= y_min && !check_flag(flag_t::current, { x, step })) step--;
     if (step < y_min) return false;
-    step = i + 1;
-    while (step <= x_max && !check_flag(flag_t::current, { step, j })) step++;
+    step = x + 1;
+    while (step <= x_max && !check_flag(flag_t::current, { step, y })) step++;
     if (step > x_max) return false;
     return true;
+}
+
+inline std::array<signed, 4> draw_process_t::find_x_y_min_max(std::vector<point2_t> points) {
+    if (points.size() == 0) return {0, 0, 0, 0};
+    signed x_min = points[0].x, x_max = points[0].x, y_min = points[0].y, y_max = points[0].y;
+    size_t points_size = points.size() - 1;
+    for (auto&& point : points) {
+        if (point.x < x_min) {
+            x_min = point.x;
+        }
+        if (point.x > x_max) {
+            x_max = point.x;
+        }
+        if (point.y < y_min) {
+            y_min = point.y;
+        }
+        if (point.y > y_max) {
+            y_max = point.y;
+        }
+    }
+    
+    return { x_min, x_max, y_min, y_max };
 }
 
 void draw_process_t::alpha_to_color() {

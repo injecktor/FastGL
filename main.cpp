@@ -14,7 +14,11 @@ int main() {
     line_param.effect = line_effects::gradient;
     line_param.extra_color = color_t::blue;
 
-    scene.triangle(line_t(color_t::red), {50, 50}, {100, 100}, {30, 80});
+    rect_params_t rect_param;
+    rect_param.rotation = 1;
+
+    scene.rectangle({color_t::red}, { 100, 100 }, 100, 80, true, rect_param);
+    // scene.triangle(line_t(color_t::red), {50, 50}, {100, 100}, {30, 80});
 
     scene.render();
 

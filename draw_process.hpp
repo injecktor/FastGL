@@ -4,6 +4,7 @@
 #include <cmath>
 #include <memory>
 #include <string>
+#include <array>
 
 #include "color.hpp"
 #include "line.hpp"
@@ -42,6 +43,7 @@ public:
     void rectangle(line_t line, point2_t point, unsigned width, unsigned height, bool fill = true, 
         rect_params_t rect_params = rect_params_t());
     void triangle(line_t line, point2_t point1, point2_t point2, point2_t point3, bool fill = true);
+    // void quadrangle
 
     // file_name without extension
     void generate_image(const std::string &file_name, image_type_t image_type) const;
@@ -65,6 +67,7 @@ private:
     inline bool check_flag(flag_t flag, point2_t point);
     inline void set_flag(flag_t flag, unsigned index, bool value);
     inline bool is_in_figure(signed x, signed y, signed x_max, signed y_min, signed y_max);
+    inline std::array<signed, 4> find_x_y_min_max(std::vector<point2_t> points);
     void alpha_to_color();
 };
 
