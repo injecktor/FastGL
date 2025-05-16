@@ -333,7 +333,6 @@ void draw_process_t::generate_image(const std::string &file_name, image_type_t i
     }
     file.open("images/" + file_name, std::ofstream::out | std::ofstream::binary);
     ASSERT(file.is_open(), "Could not open file");
-    img_gen->init();
     img_gen->generate(m_frame_buffer, m_background_color);
     file.close();
 }

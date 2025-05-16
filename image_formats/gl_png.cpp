@@ -1,23 +1,17 @@
 #include "gl_png.hpp"
 
-void png_t::init(std::ofstream* file, unsigned int width, unsigned int height) {
-    ASSERT(file != nullptr, "Trying to init empty file");
-    m_file = file;
-    add_png_structure();
-    m_file = nullptr;
+png_t::png_t(std::ofstream* file, unsigned width, unsigned height) 
+    : m_file(file), m_width(width), m_height(height) {
 }
 
-void png_t::add_png_structure() const {
-    // for (const auto byte: m_png_structure_bytes) {
-    //     *m_file << byte;
-    // }
+void png_t::generate(const std::vector<color_t> &image_buffer, color_t background) {
+    for (size_t i = 0; i < image_buffer.size(); ++i) {
+        auto alphaed = color_t::alpha_to_color(image_buffer[i], background);
+        *m_file << std::to_string(alphaed.r()) << ' ' << std::to_string(alphaed.g()) << ' ' 
+        << std::to_string(alphaed.b()) << std::endl;
+    }
 }
 
-void png_t::add_ihdr_chunk() const {
-    // for (const auto byte: m_png_ihdr_bytes) {
-    //     *m_file << byte;
-    // }
-    // for (const auto byte: m_png_ihdr_data_bytes) {
-    //     *m_file << byte;
-    // }
+std::string png_t::get_format_extension() {
+    return m_file_extension;
 }

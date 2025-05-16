@@ -19,8 +19,8 @@ int main() {
     circle_params.inner_color = color_t(color_t::green, 0.5);
 
     fastgl_t scene(250, 250);
-    scene.quadrangle({color_t(color_t::red, 0.5)}, {30, 30}, {50, 100}, {200, 70}, {190, 30}, true, quad_params);
-    scene.circle(color_t(color_t::red, 0.5), {100, 100}, 50, true, circle_params);
+    scene.quadrangle({color_t(color_t::red)}, {30, 30}, {50, 100}, {200, 70}, {190, 30}, true, quad_params);
+    scene.circle(color_t(color_t::red), {100, 100}, 50, true, circle_params);
     scene.render();
     scene.generate_image("image.ppm", image_type_t::ppm);
 
