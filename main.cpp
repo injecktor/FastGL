@@ -9,20 +9,29 @@
 
 using namespace std;
 
+struct point3_t {
+    signed x, y ,z;
+};
+
 int main() {
-    quad_params_t quad_params;
-    quad_params.use_inner_color = true;
-    quad_params.inner_color = color_t(color_t::green, 0.5);
+    // signed width = 250, height = 250;
+    // point3_t point1{30, 60, 10};
+    // point3_t point2{30, 30, 10};
+    // point3_t point3{60, 30, 10};
+    // point3_t point4{60, 60, 10};
+    // point3_t point5{60, 30, 30};
+    // point3_t point6{60, 60, 30};
+    // point3_t point7{30, 30, 30};
+    // point3_t point8{30, 60, 30};
+    // point3_t points[] = {point1, point2, point3, point4, point5, point6, point7, point8};
+    // double d[8];
 
-    circle_params_t circle_params;
-    circle_params.use_inner_color = true;
-    circle_params.inner_color = color_t(color_t::green, 0.5);
+    // double k = width * cos(50 / 180 * 3.1415926535 / sqrt(2));
 
-    fastgl_t scene(250, 250);
-    scene.quadrangle({color_t(color_t::red)}, {30, 30}, {50, 100}, {200, 70}, {190, 30}, true, quad_params);
-    scene.circle(color_t(color_t::red), {100, 100}, 50, true, circle_params);
-    scene.render();
-    scene.generate_image("image.ppm", image_type_t::ppm);
+    // fastgl_t frame(width, height);
+
+    frame.render();
+    frame.generate_image("image.ppm", image_type_t::ppm);
 
     return 0;
 }
