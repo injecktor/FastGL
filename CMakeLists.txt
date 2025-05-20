@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.22)
 project(fastgl)
 
+add_subdirectory(math_tools)
+
 set(CMAKE_CXX_STANDARD 20)
 
 add_executable(fastgl main.cpp
@@ -27,5 +29,6 @@ target_include_directories(fastgl PRIVATE
         )
 
 target_link_libraries(fastgl PRIVATE
+        math_tools
         X11
         )
