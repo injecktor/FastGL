@@ -28,10 +28,11 @@ int main() {
 
     // double k = width * cos(50 / 180 * 3.1415926535 / sqrt(2));
 
-    // fastgl_t frame(width, height);
+    fastgl_t frame(1, 1);
+    frame.set_pixel(color_t::red, {1, 1});
 
     frame.render();
-    frame.generate_image("image.ppm", image_type_t::ppm);
+    frame.generate_image("image.png", image_type_t::png);
 
     return 0;
 }

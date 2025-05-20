@@ -323,7 +323,7 @@ void draw_process_t::generate_image(const std::string &file_name, image_type_t i
         }
         break;
         case image_type_t::png: {
-            ASSERT(false, "Not implemented");
+            img_gen = std::make_shared<png_t>(&file, m_width, m_height);
         }
         break;
         default: {
