@@ -21,14 +21,18 @@ add_executable(fastgl main.cpp
         image_formats/gl_png.hpp
         image_formats/gl_ppm.cpp
         image_formats/gl_ppm.hpp
-        )
+)
 
 target_include_directories(fastgl PRIVATE 
         ${CMAKE_CURRENT_SOURCE_DIR}
         image_formats
-        )
+)
 
 target_link_libraries(fastgl PRIVATE
         math_tools
         X11
-        )
+)
+
+set_target_properties(fastgl PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+)
