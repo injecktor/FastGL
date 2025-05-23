@@ -14,22 +14,18 @@ struct point3_t {
 };
 
 int main() {
-    // signed width = 250, height = 250;
-    // point3_t point1{30, 60, 10};
-    // point3_t point2{30, 30, 10};
-    // point3_t point3{60, 30, 10};
-    // point3_t point4{60, 60, 10};
-    // point3_t point5{60, 30, 30};
-    // point3_t point6{60, 60, 30};
-    // point3_t point7{30, 30, 30};
-    // point3_t point8{30, 60, 30};
-    // point3_t points[] = {point1, point2, point3, point4, point5, point6, point7, point8};
-    // double d[8];
-
-    // double k = width * cos(50 / 180 * 3.1415926535 / sqrt(2));
+    // fastgl_t frame(10, 10);
+    // rect_params_t rect_params;
+    // rect_params.use_inner_color = true;
+    // rect_params.inner_color = color_t(color_t::green, 0.5);
+    // frame.rectangle(line_t(color_t::red), {50, 50}, 100, 80, true, rect_params);
+    // circle_params_t cir_params;
+    // cir_params.use_inner_color = true;
+    // cir_params.inner_color = color_t(color_t::green, 0.5);
+    // frame.circle(color_t::red, {100, 170}, 50, true, cir_params);
 
     fastgl_t frame(1, 1);
-    frame.set_pixel(color_t::red, {1, 1});
+    frame.set_pixel(color_t::red, {0, 0});
 
     frame.render();
     frame.generate_image("image.png", image_type_t::png);

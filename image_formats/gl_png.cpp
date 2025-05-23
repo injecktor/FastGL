@@ -51,7 +51,7 @@ void png_t::generate(const std::vector<color_t> &image_buffer, color_t backgroun
         }
     }
     crc ^= 0xffffffff;
-        unsigned char crc_0 = (crc & 0xff000000) >> 24;
+    unsigned char crc_0 = (crc & 0xff000000) >> 24;
     unsigned char crc_1 = (crc & 0xff0000) >> 16;
     unsigned char crc_2 = (crc & 0xff00) >> 8;
     unsigned char crc_3 = crc & 0xff;
@@ -80,7 +80,7 @@ void png_t::generate(const std::vector<color_t> &image_buffer, color_t backgroun
     for (size_t i = 0; i < image_buffer_size / 3; ++i) {
         auto alphaed = color_t::alpha_to_color(image_buffer[i], background);
         *m_file << (unsigned char)alphaed.r() << (unsigned char)alphaed.g()  
-        << (unsigned char)(alphaed.b());
+            << (unsigned char)(alphaed.b());
         crc = math_tools::crc32_fast(reinterpret_cast<unsigned char*>(&alphaed.r()), 1, crc);
         crc ^= 0xffffffffUL;
         crc = math_tools::crc32_fast(reinterpret_cast<unsigned char*>(&alphaed.g()), 1, crc);
