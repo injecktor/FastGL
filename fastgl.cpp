@@ -6,6 +6,17 @@ fastgl_t::fastgl_t(signed width, signed height) :
     draw_process(m_width, m_height) {
 }
 
+void fastgl_t::create_window(signed x, signed y) {
+    if (x < 0 || y < 0) return;
+    m_d = XOpenDisplay(NULL);
+    m_s = XDefaultScreen(m_d);
+    m_w = XCreateSimpleWindow(m_d, XRootWindow(m_d, m_s), x, y,
+        m_width, m_height, 0, XBlackPixel(m_d, m_s), XWhitePixel(m_d, m_s));
+    XSelectInput(m_d, m_w, ButtonPressMask);
+    XMapWindow(m_d, m_w);
+    XNextEvent(m_d, &m_ev);
+}
+
 void fastgl_t::set_pixel(color_t color, point2_t point, bool force) {
     action_params_t params;
     params.action = action_t::act_set_pixel;

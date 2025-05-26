@@ -3,9 +3,15 @@
 #include "draw_process.hpp"
 #include <queue>
 
+#ifdef linux
+#include <X11/Xlib.h>
+#endif
+
 class fastgl_t {
 public:
     fastgl_t(signed width, signed height);
+
+    void create_window(signed x = 0, signed y = 0);
 
     void set_pixel(color_t color, point2_t point, bool force = false);
     color_t get_pixel(point2_t point);
@@ -30,6 +36,10 @@ public:
 private:
     signed m_width;
     signed m_height;
+    Display* m_d; 
+    int m_s; 
+    Window m_w;
+    XEvent m_ev;
 
     draw_process_t draw_process;
 
